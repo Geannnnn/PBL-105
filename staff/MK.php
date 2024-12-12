@@ -85,21 +85,32 @@
 
                                     <div class="modal-body">
                                         <div class="form-floating mb-3">
-                                        <select name="barang" id="bara" class="form-select">
+                                        <select name="barang" id="bara" class="form-select" onchange="lihat_stok( this )">
                                                 <option value="">Pilih Barang</option>
                                                 <?php 
                                                 $s = $conn->prepare("SElect * from barang");
                                                 $s ->execute();
                                                 foreach ($s as $swad) :
                                                 ?>
-                                                <option value="<?= $swad['id_barang'] ?>"><?= $swad['nama_barang'] ?></option>
+                                                <option value="<?= $swad['id_barang'] ?>" data-stok="<?= $swad['stok'] ?>"><?= $swad['nama_barang'] ?></option>
                                                 <?php endforeach ?>
                                         </select>
                                         <label for="bara">Pilih Barang</label>
                                         </div>
+
+                                        <script>
+                                            function lihat_stok(select) {
+    // Ambil nilai data-stok dari option yang dipilih
+    var stok = select.options[select.selectedIndex].getAttribute("data-stok");
+    
+    // Tampilkan stok pada elemen dengan id "stok-display"
+    document.getElementById('stok_barang').innerHTML = "(" + stok + ")";
+    document.getElementById('stok').setAttribute('maxvalue', stok);
+}
+                                        </script>
                                         <div class="form-floating mb-3">
-                                            <input type="number" class="form-control" name="stok" id="stok">
-                                            <label for="stok">Stok()</label>
+                                            <input type="number" class="form-control" name="stok" id="stok" maxvalue="">
+                                            <label for="stok">Stok <span id="stok_barang">(pilih barang)</span></label>
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input type="date" name="tanggalmk" id="tmk" class="form-control" placeholder="Pilih Tanggal">
@@ -122,54 +133,8 @@
                                     </div>
                                     </form>
                                 </div>
-
-                               
-
-                                <script>
-                                    const barangSelect = document.getElementById('bara');
-                                    const stokInput = document.getElementById('stok');
-                                    const alasanDiv = document.getElementById('catatan');
-                                    const barangmkSelect = document.getElementById('barangmk');
-
-                                    barangSelect.addEventListener('change', function() {
-                                        const barangId = this.value;  
-
-                                        if (barangId) {
-                                            fetch('get_stok.php', {
-                                                method: 'POST',
-                                                body: new URLSearchParams({
-                                                    'id_barang': barangId
-                                                })
-                                            })
-                                            .then(response => response.json()) 
-                                            .then(data => {
-                                                if (data.stok) {
-                                                    stokInput.value = data.stok;  
-                                                } else {
-                                                    stokInput.value = 'Stok tidak tersedia';  
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error('Error:', error);
-                                                stokInput.value = 'Error mengambil stok'; 
-                                            });
-                                        } else {
-                                            stokInput.value = '';
-                                        }
-                                    });
-
-                                    barangmkSelect.addEventListener('change', function() {
-                                        if (this.value === 'barangkeluar') {
-                                            alasanDiv.style.display = 'block';  
-                                        } else {
-                                            alasanDiv.style.display = 'none'; 
-                                        }
-                                    });
-                                </script>
-
                             </div>
                         </div>
-
                     </thead>
                 </table>
             </div>
