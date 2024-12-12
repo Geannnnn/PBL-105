@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     <?php include"../s.php"; ?>
@@ -374,7 +375,7 @@
                                 </div>
                              
                                 <div class="modal-body">
-                                    <form action="" method="post">
+                                    <form action="" method="post" enctype="multipart/form-data">
                                         <input type="text" name="id_barang" id="">
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Nama Barang" required>
@@ -385,9 +386,9 @@
                                             <option value="" selected disabled>Pilih Kategori</option>
                                                 <?php $s = $conn->prepare("SELECT * FROM kategori"); 
                                                 $s->execute();
-                                                foreach ($s as $rawr) : ?>
-                                            <option value="<?= $rawr['id_kategori'] ?>"><?= $rawr['nama_kategori']; ?></option>
-                                         <?php endforeach ?>
+                                                foreach ($s as $wsw) : ?>
+                                            <option value="<?= $wsw['id_kategori'] ?>"><?= $wsw['nama_kategori']; ?></option>
+                                         <?php  endforeach ?>
                                         </select>
                                         <label for="kat">Kategori</label>
                                     </div>
@@ -396,14 +397,14 @@
                                             <option value="" selected disabled>Pilih Satuan</option>
                                             <?php $s = $conn->prepare("SELECT * FROM satuan"); 
                                             $s->execute();
-                                            foreach ($s as $rawr) : ?>
-                                            <option value="<?= $rawr['id_satuan'] ?>"><?= $rawr['nama_satuan']; ?></option>
+                                            foreach ($s as $wasd) : ?>
+                                            <option value="<?= $wasd['id_satuan'] ?>"><?= $wasd['nama_satuan']; ?></option>
                                             <?php endforeach ?>
                                         </select>
                                         <label for="sat">Satuan</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="number" class="form-control" name="stok_barang" id="stk" placeholder="Stok" required>
+                                        <input type="number" class="form-control" name="stok_barang" id="stk" placeholder="Stok">
                                         <label for="stk">Stok</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -424,13 +425,13 @@
                         $ids = $_SESSION['id'];
                         $sat = $_POST['barang_satuan'];
                         $stok = $_POST['stok_barang'];
-                        // $gambar = $_FILES['gambar']['name'];
+                        $gambar = $_FILES['gambar']['name'];
+                        $gas = $_FILES['gambar']['tmp_name'];
 
-                        // move_uploaded_file($_FILES['gambar']['tmp_name'], 'gambar/'. $gambar);
 
-                        $s = $conn->prepare("insert into barang values ('$id','$s','$d','$ids','$sat','$stok','')");
+                        $s = $conn->prepare("insert into barang values ('$id','$s','$d','$ids','$sat','$stok','$gambar')");
                         $s->execute();
-                        error_reporting(0);
+                        move_uploaded_file($gas, '../gambar/'. $gambar);
                         header("location: stok.php");
 
                     }elseif(isset($_POST['deleteBarang'])) {
@@ -440,36 +441,29 @@
                         $s->execute();
                         error_reporting(0);
                         header("location:stok.php");
-                    }
-                    
-                    ?>
-                    
-                    <!-- <div class="modal" id="tamkategori">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Tambah Kategori</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="" method="post">
-                                        <div class="form-floating mb-3 mt-3">
-                                            <input type="text" class="form-control" id="nama_kategori" placeholder="Nama Kategori" name="nama_kategori" required>
-                                            <label for="nama_kategori" class="form-label">Nama Kategori</label>
-                                        </div>
-                                        <div class="form-floating mb-5 mt-3">
-                                            <input type="text" class="form-control" id="emje" placeholder="Jenis Kategori" name="jenis_kategori">
-                                            <label for="emje">Jenis Kategori</label>
-                                        </div>
-                                        <button type="submit" name="submit_kategori" class="btn btn-primary">Tambah</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  -->
-                    
+                    }elseif(isset($_POST['editBarang'])) {
+                        $fo;
+                        if ($_FILES['gambar']['name'] == '') {
+                            $fo = $_POST['odd'];
+                        }else{
+                            $fo = $_FILES['gambar']['name'];
+                        }
 
-                    
+                        $awd = $_POST['id_barang'];
+                        $nb = $_POST['nama_barang'];
+                        $k = $_POST['barang_kategori'];
+                        $sat = $_POST['barang_satuan'];
+                        $stok = $_POST['stok_barang'];
+                        $gas = $_FILES['gambar']['tmp_name'];
+                        $isd = $_SESSION['id'];
+
+                        $s = $conn->prepare("UPDATE barang SET id_kategori = '$k', nama_barang = '$nb', stok = '$stok', gambar ='$fo', id_user = '$isd' where id_barang = '$awd' ");
+                        $s->execute();
+                        move_uploaded_file($gas, '../gambar/'. $fo);
+                        error_reporting(0);
+                        header("location: refresh:0");
+                    } 
+                    ?>
 
                     <tr>
                         <th>No</th>
@@ -526,6 +520,7 @@
                     </div>
 
                     <div class="modal" id="editBarang<?= $rawr['id_barang'] ?>">
+                        <form action="" method="post" enctype="multipart/form-data">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -534,7 +529,8 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="id_barang" id="id" value="<?= $rawr['id_barang'] ?>" disabled>
+                                        <input type="hidden" name="id_barang" value="<?= $rawr['id_barang'] ?>">
+                                        <input type="text" class="form-control" name="id_barang" id="id" value="<?= $rawr['id_barang'] ?>" readonly>
                                         <label for="id">Id Barang</label>
                                     </div>
                                     <div class="form-floating mb-3">
@@ -563,8 +559,18 @@
                                         </select>
                                         <label for="kat">Kategori</label>
                                     </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" name="stok_barang" id="rors" placeholder="Stok" readonly value="<?= $rawr['stok'] ?>">
+                                        <label for="rors">Stok</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="file" class="form-control" name="gambar" id="gam">
+                                        <label for="gam">Gambar</label>
+                                        <input type="hidden" name="odd" value="<?= $rawr['gambar'] ?>">
+                                    </div>
                                     
                                     <button type="submit" name="editBarang" class="btn btn-primary">Simpan</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
