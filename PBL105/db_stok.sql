@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 16, 2024 at 06:43 AM
+-- Generation Time: Dec 18, 2024 at 07:00 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -42,10 +42,9 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id_barang`, `id_kategori`, `nama_barang`, `id_user`, `id_satuan`, `stok`, `gambar`) VALUES
-('1', 1, 'Sanford', 8, 1, 0, 'sanford botol.png'),
-('BK02', 4, 'Burger King', 8, 7, 45, '675fafdd0abeb_burger kink.png'),
-('FF01', 3, 'French Fries', 8, 1, 0, '675fb16d06715_frenchfreis.png'),
-('S01', 1, 'Sanford', 8, 6, 0, '675fae37dd5d0_sanford botol.png');
+('AM01', 1, 'Air Mineral', 8, 6, 135, '676013150caf5_sanford botol.png'),
+('B01', 4, 'Burger', 8, 6, 10, '6760132218b68_burger kink.png'),
+('FF01', 3, 'French Fries', 8, 1, 133, '6760133224211_frenchfreis.png');
 
 -- --------------------------------------------------------
 
@@ -112,25 +111,36 @@ CREATE TABLE `transaksi_keluar` (
 --
 
 INSERT INTO `transaksi_keluar` (`id_transaksi_keluar`, `id_barang`, `id_user`, `tanggal_keluar`, `jumlah_keluar`, `catatan`) VALUES
-(1, '1', 2, '2024-12-05', 2, 'Dibeli'),
-(2, '1', 2, '2024-12-13', 2, ''),
-(3, '1', 2, '2024-12-13', 2, ''),
-(4, '1', 2, '2024-12-16', 4, 'Salah'),
-(5, '1', 8, '2024-12-16', 20, 'dibeli'),
-(6, '1', 8, '2024-12-16', 20, 'dibeli');
+(8, 'AM01', 8, '2024-12-16', 10, 'Dibeli'),
+(9, 'B01', 8, '2024-12-16', 10, 'Dibeli'),
+(12, 'FF01', 8, '2024-12-16', 10, 'Dibeli'),
+(13, 'AM01', 8, '2024-12-18', 30, 'Salah Memasukkan data');
 
 --
 -- Triggers `transaksi_keluar`
 --
 DELIMITER $$
-CREATE TRIGGER `log_alert` AFTER INSERT ON `transaksi_keluar` FOR EACH ROW IF (SELECT stok FROM barang WHERE id_barang = NEW.id_barang) < NEW.jumlah_keluar THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Stok barang tidak mencukupi';
-    ELSE
+CREATE TRIGGER `after_barang_keluar` AFTER INSERT ON `transaksi_keluar` FOR EACH ROW BEGIN
+    DECLARE satuan_value INT;
+    DECLARE stok_tersedia INT;
+
+    SELECT jumlah_satuan INTO satuan_value
+    FROM barang
+    JOIN satuan ON barang.id_satuan = satuan.id_satuan
+    WHERE barang.id_barang = NEW.id_barang;
+
+    SELECT stok INTO stok_tersedia
+    FROM barang
+    WHERE id_barang = NEW.id_barang;
+
+    IF stok_tersedia >= NEW.jumlah_keluar THEN
         UPDATE barang
-        SET stok = stok - NEW.jumlah_keluar
+        SET stok = stok - (NEW.jumlah_keluar * satuan_value)
         WHERE id_barang = NEW.id_barang;
-    END IF
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stok barang tidak cukup untuk dikeluarkan';
+    END IF;
+END
 $$
 DELIMITER ;
 
@@ -153,18 +163,37 @@ CREATE TABLE `transaksi_masuk` (
 --
 
 INSERT INTO `transaksi_masuk` (`id_barang`, `id_transaksi_masuk`, `id_user`, `jumlah_masuk`, `tanggal_masuk`) VALUES
-('1', 1, 2, 2, '2024-12-05'),
-('1', 3, 2, 2, '2024-12-13'),
-('1', 4, 2, 35, '2024-12-16'),
-('BK02', 5, 8, 45, '2024-12-16');
+('AM01', 7, 8, 20, '2024-12-16'),
+('B01', 8, 8, 20, '2024-12-16'),
+('FF01', 9, 8, 20, '2024-12-16'),
+('AM01', 10, 8, 24, '2024-12-18'),
+('FF01', 11, 8, 123, '2024-12-18'),
+('AM01', 12, 8, 123, '2024-12-18'),
+('AM01', 13, 8, 1, '2024-12-18'),
+('AM01', 14, 8, 1, '2024-12-18'),
+('AM01', 15, 8, 1, '2024-12-18'),
+('AM01', 16, 8, 1, '2024-12-18'),
+('AM01', 17, 8, 1, '2024-12-18'),
+('AM01', 18, 8, 1, '2024-12-18'),
+('AM01', 19, 8, 1, '2024-12-18'),
+('AM01', 20, 8, 1, '2024-12-18');
 
 --
 -- Triggers `transaksi_masuk`
 --
 DELIMITER $$
-CREATE TRIGGER `log_barang_masuk` AFTER INSERT ON `transaksi_masuk` FOR EACH ROW UPDATE barang set
-stok = stok + new.jumlah_masuk
-where id_barang = new.id_barang
+CREATE TRIGGER `after_barang_masuk` AFTER INSERT ON `transaksi_masuk` FOR EACH ROW BEGIN
+    DECLARE satuan_value INT;
+
+    SELECT jumlah_satuan INTO satuan_value
+    FROM barang
+    JOIN satuan ON barang.id_satuan = satuan.id_satuan
+    WHERE barang.id_barang = NEW.id_barang;
+
+    UPDATE barang
+    SET stok = stok + (NEW.jumlah_masuk * satuan_value)
+    WHERE id_barang = NEW.id_barang;
+END
 $$
 DELIMITER ;
 
@@ -232,7 +261,7 @@ ALTER TABLE `transaksi_keluar`
 ALTER TABLE `transaksi_masuk`
   ADD PRIMARY KEY (`id_transaksi_masuk`),
   ADD KEY `id_user` (`id_user`),
-  ADD KEY `id_barang` (`id_barang`);
+  ADD KEY `transaksi_masuk_ibfk_2` (`id_barang`);
 
 --
 -- Indexes for table `user`
@@ -260,13 +289,13 @@ ALTER TABLE `satuan`
 -- AUTO_INCREMENT for table `transaksi_keluar`
 --
 ALTER TABLE `transaksi_keluar`
-  MODIFY `id_transaksi_keluar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_transaksi_keluar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `transaksi_masuk`
 --
 ALTER TABLE `transaksi_masuk`
-  MODIFY `id_transaksi_masuk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_transaksi_masuk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -310,7 +339,7 @@ ALTER TABLE `transaksi_keluar`
 --
 ALTER TABLE `transaksi_masuk`
   ADD CONSTRAINT `transaksi_masuk_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `transaksi_masuk_ibfk_2` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id_barang`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `transaksi_masuk_ibfk_2` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id_barang`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

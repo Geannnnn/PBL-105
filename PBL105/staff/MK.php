@@ -75,19 +75,19 @@
                         <?php
                         if (isset($_POST['addmk'])) {
                             $id_barang = $_POST['barang'];
-                            $stok = $_POST['stok'];
                             $tanggal = $_POST['tanggalmk'];
                             $jenis = $_POST['barangmk'];
                             $catatan = $_POST['catatan'] ?? '';
                             $iduser = $_SESSION['id'];
+                            $jumlah_stok = $_POST['jumlahstok'];
 
-                            if ($id_barang && $stok && $tanggal && $jenis) {
+                            if ($id_barang && $jumlah_stok && $tanggal && $jenis) {
                                 if ($jenis == "barangmasuk") {
                                     $query = $conn->prepare("INSERT INTO transaksi_masuk (id_barang, id_transaksi_masuk, id_user, jumlah_masuk, tanggal_masuk) VALUES (?, ?, ?, ?, ?)");
-                                    $query->execute([$id_barang, null, $iduser, $stok, $tanggal]);
+                                    $query->execute([$id_barang, null, $iduser, $jumlah_stok, $tanggal]);
                                 } elseif ($jenis == "barangkeluar") {
                                     $query = $conn->prepare("INSERT INTO transaksi_keluar (id_barang, id_transaksi_keluar, id_user,tanggal_keluar, jumlah_keluar,  catatan) VALUES (?, ?, ?, ?, ? ,?)");
-                                    $query->execute([$id_barang, null, $iduser, $tanggal, $stok, $catatan]);
+                                    $query->execute([$id_barang, null, $iduser, $tanggal, $jumlah_stok, $catatan]);
                                 }
                                 echo "<script>alert('Data berhasil ditambahkan!');</script>";
                             } else {
@@ -96,75 +96,135 @@
                         }
                         ?>
 
-                        <div class="modal" id="tamtam">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="" method="post">
+                    <div class="modal fade" id="tamtam">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form action="" method="post">
                                     <div class="modal-header">
-                                        <h2>Tambah data</h2>  
-                                        <input type="button" class="btn-close" data-bs-dismiss="modal">                                      
+                                        <h2>Tambah Data</h2>
+                                        <input type="button" class="btn-close" data-bs-dismiss="modal">
                                     </div>
 
                                     <div class="modal-body">
+
                                         <div class="form-floating mb-3">
-                                            <select name="barang" id="bara" class="form-select" onchange="lihat_stok( this )">
-                                                <option value="">Pilih Barang</option>
+                                            <select name="barangmk" id="barangmk" class="form-select">
+                                                <option value="" selected disabled>Barang Masuk/Barang Keluar</option>
+                                                <option value="barangmasuk">Barang Masuk</option>
+                                                <option value="barangkeluar">Barang Keluar</option>
+                                            </select>
+                                            <label for="barangmk">Pilih!</label>
+                                        </div>
+
+                                        <div class="form-floating mb-3">
+                                            <select name="barang" id="bara" class="form-select" onchange="lihatBarang(this)">
+                                                <option selected disabled value="">Pilih Barang</option>
                                                 <?php 
-                                                $s = $conn->prepare("SElect * from barang");
+                                                $s = $conn->prepare("
+                                                    SELECT 
+                                                        barang.id_barang, 
+                                                        barang.nama_barang, 
+                                                        barang.stok, 
+                                                        satuan.nama_satuan, 
+                                                        satuan.jumlah_satuan 
+                                                    FROM barang 
+                                                    JOIN satuan ON barang.id_satuan = satuan.id_satuan
+                                                ");
                                                 $s->execute();
                                                 foreach ($s as $swad) :
                                                 ?>
-                                                <option value="<?= $swad['id_barang'] ?>" data-stok="<?= $swad['stok'] ?>"><?= $swad['nama_barang'] ?></option>
+                                                <option 
+                                                    value="<?= $swad['id_barang'] ?>" 
+                                                    data-stok="<?= $swad['stok'] ?>" 
+                                                    data-satuan="<?= $swad['nama_satuan'] ?>" 
+                                                    data-jumlah_satuan="<?= $swad['jumlah_satuan'] ?>">
+                                                    <?= $swad['nama_barang'] ?>
+                                                </option>
                                                 <?php endforeach ?>
                                             </select>
                                             <label for="bara">Pilih Barang</label>
                                         </div>
 
-                                        <script>
-                                            function lihat_stok(select) {
-                                            var stok = select.options[select.selectedIndex].getAttribute("data-stok");
-                                            
-                                            document.getElementById('stok_barang').innerHTML = "(" + stok + ")";
-                                            document.getElementById('stok').setAttribute('maxvalue', stok);
-                                        }
-                                        </script>
+                                        <div class="form-floating mb-3">
+                                            <input type="number" class="form-control" name="stok" id="stok" placeholder="Jumlah Stok" readonly>
+                                            <label for="stok">Jumlah Stok</label>
+                                        </div>
 
                                         <div class="form-floating mb-3">
-                                            <input type="number" class="form-control" name="stok" id="stok" maxvalue="">
-                                            <label for="stok">Stok <span id="stok_barang">(Pilih Barang)</span></label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input type="date" name="tanggalmk" class="form-control" placeholder="Pilih Tanggal">
+                                            <input type="date" name="tanggalmk" id="tmk" class="form-control" placeholder="Pilih Tanggal">
                                             <label for="tmk">Pilih Tanggal</label>
                                         </div>
+                                        
                                         <div class="form-floating mb-3">
-                                        <select name="barangmk" id="barangmk" class="form-control">
-                                            <option value="" selected disabled>Barang Masuk/Barang Keluar</option>
-                                            <option value="barangmasuk">Barang Masuk</option>
-                                            <option value="barangkeluar">Barang Keluar</option>
-                                        </select>
-                                            <label for="barangmk">Pilih!</label>
+                                            <input type="text" id="barangsatuan" name="barangsatuan" class="form-control" placeholder="Jenis Satuan" readonly>
+                                            <label for="barangsatuan">Satuan</label>
                                         </div>
+
+                                        <div class="form-floating mb-3">
+                                            <input type="number" name="jumlahstok" id="jumlahstok" class="form-control" placeholder="Masukkan Jumlah">
+                                            <label for="jumlahstok">Masukkan Jumlah</label>
+                                        </div>
+
+
                                         <div id="catatan" class="form-floating mb-3" style="display: none;">
                                             <input type="text" class="form-control" name="catatan" placeholder="Catatan">
-                                            <label for="alasan">Catatan</label>
+                                            <label for="catatan">Catatan</label>
                                         </div>
+
                                         <button type="submit" name="addmk" class="btn btn-primary">Simpan</button>
-                                        <script>
-                                            document.getElementById('barangmk').addEventListener('change', function () {
-                                            const catatanDiv = document.getElementById('catatan');
-                                            if (this.value === 'barangkeluar') {
-                                                catatanDiv.style.display = 'block'; 
-                                            } else {
-                                                catatanDiv.style.display = 'none';  
-                                            }
-                                        });
-                                        </script>
                                     </div>
-                                    </form>
-                                </div>
+                                </form>
                             </div>
                         </div>
+                    </div>
+
+                    <script>
+                        function lihatBarang(select) {
+                            const selectedOption = select.options[select.selectedIndex];
+                            const satuan = selectedOption.getAttribute('data-satuan') || 'Tidak Ada Satuan';
+                            const jumlahSatuan = selectedOption.getAttribute('data-jumlah_satuan') || '0';
+                            const stok = selectedOption.getAttribute('data-stok') || '0';
+
+                            document.getElementById('barangsatuan').value = `${satuan} (${jumlahSatuan})`;
+
+                            document.getElementById('stok').value = stok;
+
+                        }
+
+                        document.getElementById('jumlahstok').addEventListener('input', function() {
+                            const maxStok = parseInt(document.getElementById('stok').value); 
+                            let jumlahInput = parseInt(this.value); 
+                            
+                            const jenisTransaksi = document.getElementById('barangmk').value; 
+
+                            if (jenisTransaksi === 'barangkeluar') {
+                                if (jumlahInput > maxStok) {
+                                    // alert("Jumlah yang dimasukkan melebihi stok yang tersedia.");
+                                    this.value = maxStok; 
+                                }
+                            }
+                        });
+
+                        document.getElementById('barangmk').addEventListener('change', function() {
+                            const jenisTransaksi = this.value;
+                            const stok = parseInt(document.getElementById('stok').value); 
+
+                            if (jenisTransaksi === 'barangkeluar') {
+                                const jumlahInput = parseInt(document.getElementById('jumlahstok').value);
+
+                                if (jumlahInput > stok) {
+                                    document.getElementById('jumlahstok').value = stok;
+                                }
+                            }
+                        });
+
+                        document.getElementById('barangmk').addEventListener('change', function () {
+                            const catatanDiv = document.getElementById('catatan');
+                            catatanDiv.style.display = this.value === 'barangkeluar' ? 'block' : 'none';
+                        });
+                    </script>
+
+
                     </thead>
 
                     <?php

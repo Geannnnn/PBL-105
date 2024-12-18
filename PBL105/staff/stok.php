@@ -68,7 +68,7 @@
                 <a href="dashboard.php">Beranda</a>
                 <a style="background-color: #d1c4e9; color: #333; border-radius: 20px;" href="stok.php">Stok</a>
                 <a href="mk.php">Barang Masuk & Keluar</a>
-                <a href="../l.php" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                <a href="../l.php" style="width: 80%;" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
             </div>
             
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
@@ -114,7 +114,7 @@
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addkate" class="btn btn-success mb-5 float-end me-5">Tambah</button>
                             </form>
 
-                            <div class="modal" id="addkate">
+                            <div class="modal fade" id="addkate">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -170,7 +170,7 @@
                                     </td>
                                 </tr>
 
-                                <div class="modal" id="hapusKate<?= $rawr['id_kategori'] ?>">
+                                <div class="modal fade" id="hapusKate<?= $rawr['id_kategori'] ?>">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -187,7 +187,7 @@
                                     </div>
                                 </div>
 
-                                <div class="modal" id="editKate<?= $rawr['id_kategori'] ?>">
+                                <div class="modal fade" id="editKate<?= $rawr['id_kategori'] ?>">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -256,7 +256,7 @@
                                     <button type="button" class="btn btn-success float-end me-5" data-bs-toggle="modal" data-bs-target="#tamSatuan">Tambah</button>
                                 </form>
 
-                                <div class="modal" id="tamSatuan">
+                                <div class="modal fade" id="tamSatuan">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -315,7 +315,7 @@
                                     </tr>
                                 </tbody>
 
-                                <div class="modal" id="hapusSatuan<?= $rawr['id_satuan'] ?>">
+                                <div class="modal fade" id="hapusSatuan<?= $rawr['id_satuan'] ?>">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -332,7 +332,7 @@
                                     </div>
                                 </div>
 
-                                <div class="modal" id="editSatuan<?= $rawr['id_satuan'] ?>">
+                                <div class="modal fade" id="editSatuan<?= $rawr['id_satuan'] ?>">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -371,7 +371,7 @@
                         <button type="button" data-bs-toggle="modal" data-bs-target="#tambar" class="btn btn-success">Tambah</button>
                     </form>
 
-                    <div class="modal" id="tambar">
+                    <div class="modal fade" id="tambar">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -453,6 +453,7 @@
                             $gambar = $_FILES['gambar']['name'];
                             $gambar_tmp = $_FILES['gambar']['tmp_name'];
                             $id_user = $_SESSION['id'];
+
 
                             if (empty($id_barang) || empty($nama_barang) || empty($barang_kategori) || empty($barang_satuan)) {
                                 echo "Kolom wajib tidak boleh kosong!";
@@ -574,7 +575,7 @@
                         </td>
                     </tr>
 
-                    <div class="modal" id="hapusBarang<?= $rawr['id_barang'] ?>">
+                    <div class="modal fade" id="hapusBarang<?= $rawr['id_barang'] ?>">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <form action="" method="post">
@@ -591,7 +592,7 @@
                         </div>
                     </div>
 
-                    <div class="modal" id="editBarang<?= $rawr['id_barang'] ?>">
+                    <div class="modal fade" id="editBarang<?= $rawr['id_barang'] ?>">
                         <form action="" method="post" enctype="multipart/form-data">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -611,22 +612,27 @@
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select class="form-select" name="barang_satuan" id="sat">
-                                            <option value="<?= $rawr['id_satuan']; ?>" selected disabled><?= $rawr['nama_satuan']; ?></option>
-                                                <?php $s = $conn->prepare("SELECT * FROM satuan"); 
-                                                $s->execute();
-                                                foreach ($s as $rawwr) { ?>
-                                            <option value="<?= $rawwr['id_satuan']; ?>"><?= $rawwr['nama_satuan']; ?></option>
-                                         <?php } ?>
+                                            <?php 
+                                            $s = $conn->prepare("SELECT * FROM satuan");
+                                            $s->execute();
+                                            foreach ($s as $rawwr) {
+                                                $selected = ($rawwr['id_satuan'] == $rawr['id_satuan']) ? 'selected' : '';
+                                            ?>
+                                            <option value="<?= $rawwr['id_satuan']; ?>" <?= $selected; ?>><?= $rawwr['nama_satuan']; ?></option>
+                                            <?php } ?>
                                         </select>
                                         <label for="sat">Satuan</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select class="form-select" name="barang_kategori" id="kat">
-                                            <option value="<?= $rawr['id_kategori']; ?>" selected disabled><?= $rawr['nama_kategori']; ?></option>
-                                                <?php $s = $conn->prepare("SELECT * FROM kategori"); 
+                                                <?php 
+                                                $s = $conn->prepare("SELECT * FROM kategori"); 
                                                 $s->execute();
-                                                foreach ($s as $rawdr) { ?>
-                                            <option value="<?= $rawdr['id_kategori']; ?>"><?= $rawdr['nama_kategori']; ?></option>
+                                                foreach ($s as $rawdr) { 
+                                                    $selected = ($rawwr['id_satuan'] == $rawr['id_satuan']) ? 'selected' : '';
+                                                ?>
+
+                                            <option value="<?= $rawdr['id_kategori']; ?>"><?= $selected ?><?= $rawdr['nama_kategori']; ?></option>
                                          <?php } ?>
                                         </select>
                                         <label for="kat">Kategori</label>

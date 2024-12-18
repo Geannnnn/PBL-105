@@ -92,19 +92,16 @@
         .content h1, .content h2 {
             color: #333;
         }
-        .video-placeholder {
+        video {
             width: 100%;
-            height: 300px;
+            height: 400px;
             background-color: #ccc;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 20px 0;
         }
-        .video-placeholder i {
-            font-size: 50px;
-            color: #333;
-        }
+        
         .faq {
             margin: 20px 0;
         }
@@ -179,9 +176,10 @@
                         </div>
                         <div class="content">
                             <h1>Tutorial Penggunaan</h1>
-                            <div class="video-placeholder">
-                                <i class="fas fa-play"></i>
-                            </div>
+                            <video controls>
+                                <source src="path_to_your_video_file.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
                             <h2>FAQ</h2>
                             <div class="faq">
                                 <div class="faq-item">

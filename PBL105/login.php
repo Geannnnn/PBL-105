@@ -80,7 +80,7 @@
 </style>
 <body>
     <div class="login-container">
-        <img alt="Logo" height="100" src="1.png" width="200"/>
+        <img alt="Logo" height="100" src="gambar/1.png" width="200"/>
         <h2 class="titles">
             Halo, Silahkan Login
         </h2>
