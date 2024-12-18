@@ -64,7 +64,7 @@
                 <a href="dashboard.php">Beranda</a>
                 <a href="stok.php">Stok</a>
                 <a style="background-color: #d1c4e9; color: #333; border-radius: 20px;" href="#">Barang Masuk & Keluar</a>
-                <a href="../l.php" class="logout" style="width: 80%;" ><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                <a href="../logout.php" class="logout" style="width: 80%;" ><i class="fas fa-sign-out-alt"></i> Keluar</a>
             </div>
         
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
@@ -87,7 +87,7 @@
                                     $query->execute([$id_barang, null, $iduser, $jumlah_stok, $tanggal]);
                                 } elseif ($jenis == "barangkeluar") {
                                     $query = $conn->prepare("INSERT INTO transaksi_keluar (id_barang, id_transaksi_keluar, id_user,tanggal_keluar, jumlah_keluar,  catatan) VALUES (?, ?, ?, ?, ? ,?)");
-                                    $query->execute([$id_barang, null, $iduser, $tanggal, $jumlah_stok, $catatan]);
+                                    $query->execute([$id_barang, null, $iduser, $tanggal, $jumlah_s, $catatan]);
                                 }
                                 echo "<script>alert('Data berhasil ditambahkan!');</script>";
                             } else {

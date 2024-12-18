@@ -62,7 +62,7 @@
                 <a href="dashboard.php">Beranda</a>
                 <a style="background-color: #d1c4e9; color: #333; border-radius: 20px;" href="#">Stok</a>
                 <a href="st.php">+ Staff Gudang</a>
-                <a href="../l.php" style="width:80%" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                <a href="../logout.php" style="width:80%" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
             </div>
 
             

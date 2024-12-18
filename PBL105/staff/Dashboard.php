@@ -132,7 +132,7 @@
                             color: #333; border-radius: 20px;" href="#">Beranda</a>
                         <a href="stok.php">Stok</a>
                         <a href="mk.php">Barang Masuk & Keluar</a>
-                        <a href="../l.php" class="logout" style="width: 80%;" ><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                        <a href="../logout.php" class="logout" style="width: 80%;" ><i class="fas fa-sign-out-alt"></i> Keluar</a>
                     </div>
                 </div>
                 <div class="col-10">

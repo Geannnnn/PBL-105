@@ -68,7 +68,7 @@
                 <a href="dashboard.php">Beranda</a>
                 <a style="background-color: #d1c4e9; color: #333; border-radius: 20px;" href="stok.php">Stok</a>
                 <a href="mk.php">Barang Masuk & Keluar</a>
-                <a href="../l.php" style="width: 80%;" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                <a href="../logout.php" style="width: 80%;" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
             </div>
             
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
