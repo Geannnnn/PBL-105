@@ -10,7 +10,7 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Roboto Mono", monospace;
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
@@ -48,11 +48,55 @@
             padding: 10px 20px;
             border-bottom: 1px solid #ddd;
             border: none;
+            position: relative;
         }
         .header i {
             margin-left: 20px;
             font-size: 20px;
             cursor: pointer;
+        }
+        #alertCount {
+            position: absolute;
+            top: -5px; /* Atur posisi vertikal */
+            right: -10px; /* Atur posisi horizontal */
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 6px;
+            font-size: 12px;
+            display: block; /* Pastikan ini tampil */
+        }
+        #bellIcon {
+            position: relative;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #alertDropdown {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+            z-index: 1000;
+            font-size: 14px;
+            display: none;
+        }
+        #alertBox {
+            padding: 10px;
+            display: none;
+        }
+        #alertHistory {
+            list-style: none;
+            padding: 10px;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #alertHistory li {
+            margin-bottom: 10px;
         }
         .stats {
             display: flex;
@@ -83,10 +127,10 @@
         }
         .stat-box p {
             margin: 0;
-            font-size: 18px;
+            font-size: 16px;
         }
         .stat-box span {
-            font-size: 24px;
+            font-size: 30px;
             font-weight: bold;
         }
         .content h1, .content h2 {
@@ -118,10 +162,31 @@
         .faq-item p {
             margin: 5px 0 0 0;
         }
+        .alert-notification {
+            position: fixed;
+            top: 50px;
+            right: 10px;
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            font-size: 16px;
+            display: none; 
+        }
     </style>
     
 </head>
 <body>
+    <?php
+    $query = $conn->prepare("SELECT id_barang, nama_barang, stok FROM barang WHERE stok <= 10 ORDER BY stok ASC");
+    $query->execute();
+    $lowStockItems = $query->fetchAll(PDO::FETCH_ASSOC);
+
+    $queryHistory = $conn->prepare("SELECT id_barang, nama_barang, stok FROM barang WHERE stok <= 10 LIMIT 50");
+    $queryHistory->execute();
+    $stockHistory = $queryHistory->fetchAll(PDO::FETCH_ASSOC);
+    ?>
     <div class="container-fluid">
             <div class="row">
                 <div class="col-2">
@@ -136,9 +201,24 @@
                 <div class="col-10 content">
                     <div class="container">
                         <div class="header">
-                            <i class="fas fa-bell"></i>
+                            <i id="bellIcon" class="fas fa-bell">
+                                <span id="alertCount"><?= count($lowStockItems) ?></span>
+                            </i>
                             <i class="fas fa-user-circle"></i>
                         </div>
+                        <div id="alertDropdown">
+                            <div id="alertBox"></div>
+                            <hr>
+                            <h5 style="margin: 10px;">History</h5>
+                        <ul id="alertHistory">
+                            <?php foreach ($stockHistory as $item): ?>
+                                <li><?= $item['nama_barang'] ?> (Stok: <?= $item['stok'] ?>)</li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <div id="alertNotification" class="alert-notification" style="display: none;">
+                        <span id="alertMessage"></span>
+                    </div>
                         <div class="stats">
                             <div class="stat-box">
                                 <div class="statm">
@@ -193,7 +273,74 @@
             </div>
     </div>
     
+    <script>
+        const alerts = <?= json_encode($lowStockItems) ?>;
+        let currentAlertIndex = 0;
+
+        function updateAlertCount() {
+            const alertCount = document.getElementById('alertCount');
+            alertCount.textContent = alerts.length;
+            alertCount.style.display = alerts.length > 0 ? 'block' : 'none';
+        }
+
+// Fungsi untuk menampilkan notifikasi bergantian
+function showAlert() {
+    if (alerts.length > 0) {
+        const alertNotification = document.getElementById('alertNotification');
+        const alertMessage = document.getElementById('alertMessage');
+
+        alertNotification.style.display = 'block';
+        alertMessage.textContent = `Stok ${alerts[currentAlertIndex].nama_barang} Menipis`;
+
+        setTimeout(() => {
+            alertNotification.style.display = 'none';
+            // Mengatur index notifikasi untuk barang berikutnya
+            currentAlertIndex = (currentAlertIndex + 1) % alerts.length;
+
+            if (alerts.length > 0) {
+                setTimeout(showAlert, 1000); // Jeda antar notifikasi (1 detik)
+            }
+        }, 3000); // Durasi setiap notifikasi (3 detik)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateAlertCount();
+    if (alerts.length > 0) {
+        showAlert(); // Menampilkan notifikasi secara bergantian
+    }
+});
+
+document.getElementById('bellIcon').addEventListener('click', () => {
+    const dropdown = document.getElementById('alertDropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+
+let notificationShown = false; // Variabel untuk mengecek apakah notifikasi sudah ditampilkan
+
+function showAlertOnce() {
+    const alertNotification = document.getElementById('alertNotification');
+    const alertMessage = document.getElementById('alertMessage');
     
+    if (alerts.length > 0 && !notificationShown) { // Cek apakah notifikasi sudah ditampilkan
+        alertNotification.style.display = 'block';
+        alertMessage.textContent = `Stok ${alerts[0].nama_barang} Menipis`;
+        
+        notificationShown = true; // Tandai bahwa notifikasi sudah ditampilkan
+        
+        setTimeout(() => {
+            alertNotification.style.display = 'none';
+        }, 3000); // Durasi notifikasi 3 detik
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateAlertCount();
+    showAlertOnce(); // Menampilkan notifikasi hanya sekali
+});
+        
+    </script>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </html>

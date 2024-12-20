@@ -87,7 +87,7 @@
                                     $query->execute([$id_barang, null, $iduser, $jumlah_stok, $tanggal]);
                                 } elseif ($jenis == "barangkeluar") {
                                     $query = $conn->prepare("INSERT INTO transaksi_keluar (id_barang, id_transaksi_keluar, id_user,tanggal_keluar, jumlah_keluar,  catatan) VALUES (?, ?, ?, ?, ? ,?)");
-                                    $query->execute([$id_barang, null, $iduser, $tanggal, $jumlah_s, $catatan]);
+                                    $query->execute([$id_barang, null, $iduser, $tanggal, $jumlah_stok, $catatan]);
                                 }
                                 echo "<script>alert('Data berhasil ditambahkan!');</script>";
                             } else {
