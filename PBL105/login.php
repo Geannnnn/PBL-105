@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-    
-<?php include"koneksi.php"; ?>
+
+<?php include "koneksi.php"; ?>
 
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,33 +11,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<?php 
-     if (isset($_POST['ror'])) {
-        $u1 = $_POST['u1'];
-        $u2 = $_POST['u2'];
+<?php
+if (isset($_POST['ror'])) {
+    $u1 = $_POST['u1'];
+    $u2 = $_POST['u2'];
 
-        $stmt = $conn->prepare("SELECT * FROM user WHERE username = :username AND password = :password");
-        $stmt->bindParam(':username', $u1);
-        $stmt->bindParam(':password', $u2);
-        $stmt->execute();
-        $data = $stmt->rowCount();
+    $stmt = $conn->prepare("SELECT * FROM user WHERE username = :username AND password = :password");
+    $stmt->bindParam(':username', $u1);
+    $stmt->bindParam(':password', $u2);
+    $stmt->execute();
+    $data = $stmt->rowCount();
 
-        if ($data > 0) {
-            $rawr = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($rawr['role'] == 'admin') {
-                $_SESSION["nama"] = $rawr['nama'];
-                $_SESSION['role'] = $rawr['role'];
-                header("location:admin/dashboard.php");
-            } elseif ($rawr['role'] == 'staff') {
-                $_SESSION['nama'] = $rawr['nama'];
-                $_SESSION['id'] = $rawr['id_user'];
-                $_SESSION['role'] = $rawr['role'];
-                header("location:staff/dashboard.php");
-            }
+    if ($data > 0) {
+        $rawr = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($rawr['role'] == 'admin') {
+            $_SESSION["nama"] = $rawr['nama'];
+            $_SESSION['role'] = $rawr['role'];
+            header("location:admin/dashboard.php");
+        } elseif ($rawr['role'] == 'staff') {
+            $_SESSION['nama'] = $rawr['nama'];
+            $_SESSION['id'] = $rawr['id_user'];
+            $_SESSION['role'] = $rawr['role'];
+            header("location:staff/dashboard.php");
         }
     }
+}
 
- ?>
+?>
 
 <style>
     body {
@@ -46,12 +47,14 @@
         height: 100vh;
         background-color: #f8f9fa;
     }
+
     .login-container h2 {
         margin-top: 20px;
         margin-bottom: 30px;
         font-size: 18px;
         color: #333;
     }
+
     .btn-login {
         background-color: #333;
         color: #fff;
@@ -61,15 +64,19 @@
         width: 30%;
         border-radius: 9px;
     }
+
     .titles {
         text-align: center;
     }
+
     .input-group {
         position: relative;
     }
+
     .input-group .form-control {
         padding-right: 2.5rem;
     }
+
     .input-group .input-icon {
         position: absolute;
         right: 10px;
@@ -78,9 +85,10 @@
         color: #333;
     }
 </style>
+
 <body>
     <div class="login-container">
-        <img alt="Logo" height="100" src="gambar/1.png" width="200"/>
+        <img alt="Logo" height="100" src="gambar/1.png" width="200" />
         <h2 class="titles">
             Halo, Silahkan Login
         </h2>
@@ -90,7 +98,7 @@
                     Username
                 </label>
                 <div class="input-group">
-                    <input class="form-control" id="username" name="u1" placeholder="Username" type="text"/>
+                    <input class="form-control" id="username" name="u1" placeholder="Username" type="text" />
                     <i class="fas fa-user input-icon"></i>
                 </div>
             </div>
@@ -99,15 +107,32 @@
                     Password
                 </label>
                 <div class="input-group">
-                    <input class="form-control" id="password"  name="u2" placeholder="Password" type="password"/>
-                    <i class="fas fa-lock input-icon"></i>
+                    <input class="form-control" id="password" name="u2" placeholder="Password" type="password" />
+                   <i class="password-toggle-icon fas fa-eye input-icon "></i>
                 </div>
             </div>
             <button class="btn btn-login" name="ror">
                 Masuk
             </button>
         </form>
+        <script>
+            const passwordField = document.getElementById("password");
+            const togglePassword = document.querySelector(".password-toggle-icon");
+
+            togglePassword.addEventListener("click", function() {
+                if (passwordField.type === "password") {
+                    passwordField.type = "text";
+                    togglePassword.classList.remove("fa-eye");
+                    togglePassword.classList.add("fa-eye-slash");
+                } else {
+                    passwordField.type = "password";
+                    togglePassword.classList.remove("fa-eye-slash");
+                    togglePassword.classList.add("fa-eye");
+                }
+            });
+        </script>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
 </html>
