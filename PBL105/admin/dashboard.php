@@ -236,7 +236,7 @@
                         <div id="alertDropdown">
                             <div id="alertBox"></div>
                             <hr>
-                            <h5 style="margin: 10px;">History</h5>
+                            <h5 style="margin: 10px;">Notifikasi</h5>
                         <ul id="alertHistory">
                             <?php foreach ($stockHistory as $item): ?>
                                 <li><?= $item['nama_barang'] ?> (Stok: <?= $item['stok'] ?>)</li>
