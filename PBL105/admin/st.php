@@ -101,7 +101,13 @@
     font-weight: bold; 
     text-align: center; 
     margin-bottom: 20px; }
-        
+        .divider {
+    border: none;
+    height: 2px;
+    background-color: #4a00e0;
+    margin: 10px 0;
+}
+
     </style>
 
 <body>
