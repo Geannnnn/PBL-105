@@ -203,17 +203,17 @@
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
                         <a style="background-color: rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
-    <i class="fas fa-home"></i> Beranda
-</a>
-<a href="stok.php">
-    <i class="fas fa-box"></i> Stok
-</a>
-<a href="st.php">
-    <i class="fas fa-users"></i> Staff Gudang
-</a>
-<a href="../logout.php" class="logout" style="width: 80%;">
-    <i class="fas fa-sign-out-alt"></i> Keluar
-</a>
+                            <i class="fas fa-home"></i> Beranda
+                        </a>
+                        <a href="stok.php">
+                            <i class="fas fa-box"></i> Stok
+                        </a>
+                        <a href="st.php">
+                            <i class="fas fa-users"></i> Staff Gudang
+                        </a>
+                        <a href="../logout.php" class="logout" style="width: 80%;">
+                            <i class="fas fa-sign-out-alt"></i> Keluar
+                        </a>
                     </div>
                 </div>
                 <div class="col-10 content">
