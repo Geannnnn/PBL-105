@@ -53,7 +53,7 @@ if ($id_barang) {
         body {
             margin: 0;
             font-family: "Roboto Mono", monospace;
-            background-color: #F8F8FC;
+            background-color: hsla(0, 0.00%, 95.30%, 0.97);
             overflow-x: hidden;
         }
 
@@ -63,8 +63,9 @@ if ($id_barang) {
             left: 0;
             width: 200px;
             height: 100vh;
-            background-color: #f0e6f6;
+            background-color: rgb(218, 199, 228);
             padding: 20px;
+            border-radius: 5px;
         }
 
         .content {
@@ -85,7 +86,7 @@ if ($id_barang) {
         }
 
         .sidebar a:hover {
-            background-color: #d1c4e9;
+            background-color: rgb(252, 246, 255);
             border-radius: 20px;
         }
 
@@ -149,6 +150,13 @@ if ($id_barang) {
             font-size: 14px;
             margin-bottom: 5px;
         }
+
+         .stok-title {
+    font-size: 25px; 
+    font-weight: bold; 
+    text-align: center; 
+    margin-bottom: 20px; }
+        
     </style>
 </head>
 <body>
@@ -156,12 +164,23 @@ if ($id_barang) {
         <div class="row">
             
             <div class="col-lg-2 col-xl-2 col-md-4 col-sm-3 sidebar">
-                <a href="dashboard.php">Beranda</a>
-                <a style="background-color: #d1c4e9; color: #333; border-radius: 20px;" href="#">Stok</a>
-                <a href="st.php">+ Staff Gudang</a>
-                <a href="../logout.php" style="width:80%" class="logout"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+                 <img src="http://localhost/PBL-105-main/PBL105/gambar/1.png" alt="Logo" width="140" height="80">
+                    <h3 class="stok-title" style="color: #4a00e0;">
+                        <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
+                    </h3>
+                <a href="dashboard.php">
+                    <i class="fas fa-home"></i> Beranda
+                </a>
+                <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
+                    <i class="fas fa-box"></i> Stok
+                </a>
+                <a href="st.php">
+                    <i class="fas fa-users"></i> Staff Gudang
+                </a>
+                <a href="../logout.php" style="width:80%" class="logout">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
             </div>
-
             <div class="col-12 col-lg-10 col-xl-10 col-md-8 col-sm-9 content">
                 <?php if ($id_barang): ?>
                     <!-- Halaman Detail Barang -->
