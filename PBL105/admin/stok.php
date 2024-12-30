@@ -163,6 +163,23 @@ if ($id_barang) {
     background-color: #4a00e0;
     margin: 10px 0;
 }
+        .custom-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #28a745;
+    border-color: #28a745;
+    width: 100px;
+    padding: 5px 10px;
+    font-size: 12px; 
+}
+
+.center-button-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100%; 
+}
 
         
     </style>
@@ -269,7 +286,10 @@ if ($id_barang) {
                                     <td><?= htmlspecialchars($rawr['stok']) ?></td>
                                     <td><?= htmlspecialchars($rawr['nama']) ?></td>
                                     <td>
-                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success">Detail</a>
+                                        <div class="center-button-container">
+                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success" style="display: flex; align-items: center; gap: 5px; background-color: #28a745; border-color: #28a745; width: 100px; padding: 5px 10px;">
+                                            <i class="fas fa-info-circle"></i> Detail
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
