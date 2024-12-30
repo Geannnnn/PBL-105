@@ -202,6 +202,7 @@
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
+                        <hr class="divider">
                         <a style="background-color: rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
                             <i class="fas fa-home"></i> Beranda
                         </a>
