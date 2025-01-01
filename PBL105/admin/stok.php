@@ -1,11 +1,28 @@
 <?php
 error_reporting(0);
-include "../koneksi.php";
+include"../koneksi.php"; 
+
+// Validasi session role
+session_start();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION['role'])) {
+    echo "<script>alert('Anda bukan Admin!'); window.location.href = '../logout.php';</script>";
+    exit();
+}
 
 // Mengecek apakah ada ID barang yang dikirimkan melalui query parameter
 $id_barang = $_GET['id'] ?? null;
 
 if ($id_barang) {
+    // Validasi ID Barang, pastikan ID ada di database
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM barang WHERE id_barang = ?");
+    $stmt->execute([$id_barang]);
+    $barangCount = $stmt->fetchColumn();
+
+    if ($barangCount == 0) {
+        echo "<script>alert('ID Barang tidak ditemukan!'); window.location.href = 'st.php';</script>";
+        exit();
+    }
+
     // Ambil detail barang berdasarkan ID
     $stmt = $conn->prepare("SELECT * FROM barang JOIN kategori ON barang.id_kategori = kategori.id_kategori JOIN satuan ON barang.id_satuan = satuan.id_satuan WHERE id_barang = ?");
     $stmt->execute([$id_barang]);
@@ -13,32 +30,33 @@ if ($id_barang) {
 
     // Ambil riwayat transaksi barang
     $historyStmt = $conn->prepare("SELECT 
-                                id_transaksi_masuk AS id_transaksi,
-                                tanggal_masuk AS tanggal,
-                                'Masuk' AS jenis_transaksi,
-                                jumlah_masuk AS jumlah,
-                                NULL AS catatan
-                            FROM transaksi_masuk
-                            WHERE id_barang = ? 
-                            UNION ALL
-                            SELECT 
-                                id_transaksi_keluar AS id_transaksi,
-                                tanggal_keluar AS tanggal,
-                                'Keluar' AS jenis_transaksi,
-                                jumlah_keluar AS jumlah,
-                                catatan
-                            FROM transaksi_keluar
-                            WHERE id_barang = ? 
-                            ORDER BY tanggal DESC");
+                                    id_transaksi_masuk AS id_transaksi,
+                                    tanggal_masuk AS tanggal,
+                                    'Masuk' AS jenis_transaksi,
+                                    jumlah_masuk AS jumlah,
+                                    NULL AS catatan
+                                FROM transaksi_masuk
+                                WHERE id_barang = ? 
+                                UNION ALL
+                                SELECT 
+                                    id_transaksi_keluar AS id_transaksi,
+                                    tanggal_keluar AS tanggal,
+                                    'Keluar' AS jenis_transaksi,
+                                    jumlah_keluar AS jumlah,
+                                    catatan
+                                FROM transaksi_keluar
+                                WHERE id_barang = ? 
+                                ORDER BY tanggal ASC");
     $historyStmt->execute([$id_barang, $id_barang]);
     $history = $historyStmt->fetchAll();
 } else {
-    // Ambil daftar barang
+    // Jika ID tidak ada, tampilkan daftar barang
     $stmt = $conn->prepare("SELECT * FROM barang JOIN user ON barang.id_user = user.id_user JOIN kategori ON barang.id_kategori = kategori.id_kategori JOIN satuan ON barang.id_satuan = satuan.id_satuan");
     $stmt->execute();
     $barangList = $stmt->fetchAll();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +71,7 @@ if ($id_barang) {
         body {
             margin: 0;
             font-family: "Roboto Mono", monospace;
-            background-color: hsla(0, 0.00%, 95.30%, 0.97);
+            background-color:hsla(0, 0.00%, 95.30%, 0.97);
             overflow-x: hidden;
         }
 
@@ -63,9 +81,10 @@ if ($id_barang) {
             left: 0;
             width: 200px;
             height: 100vh;
-            background-color: rgb(218, 199, 228);
+            background-color:rgb(218, 199, 228);
             padding: 20px;
             border-radius: 5px;
+
         }
 
         .content {
@@ -86,7 +105,7 @@ if ($id_barang) {
         }
 
         .sidebar a:hover {
-            background-color: rgb(252, 246, 255);
+            background-color:rgb(252, 246, 255);
             border-radius: 20px;
         }
 
@@ -150,37 +169,12 @@ if ($id_barang) {
             font-size: 14px;
             margin-bottom: 5px;
         }
-
-         .stok-title {
-    font-size: 25px; 
-    font-weight: bold; 
-    text-align: center; 
-    margin-bottom: 20px; }
-
-        .divider {
-    border: none;
-    height: 2px;
-    background-color: #4a00e0;
-    margin: 10px 0;
-}
-        .custom-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background-color: #28a745;
-    border-color: #28a745;
-    width: 100px;
-    padding: 5px 10px;
-    font-size: 12px; 
-}
-
-.center-button-container {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100%; 
-}
-
+        .stok-title {
+            font-size: 25px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
         
     </style>
 </head>
@@ -189,24 +183,26 @@ if ($id_barang) {
         <div class="row">
             
             <div class="col-lg-2 col-xl-2 col-md-4 col-sm-3 sidebar">
-                 <img src="http://localhost/PBL-105-main/PBL105/gambar/1.png" alt="Logo" width="140" height="80">
+            <img src="../gambar/1.png" alt="Logo" width="140" height="80">
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr class="divider">
-                <a href="dashboard.php">
-                    <i class="fas fa-home"></i> Beranda
-                </a>
-                <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
-                    <i class="fas fa-box"></i> Stok
-                </a>
-                <a href="st.php">
-                    <i class="fas fa-users"></i> Staff Gudang
-                </a>
-                <a href="../logout.php" style="width:80%" class="logout">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
-                </a>
+                    
+                    <a href="dashboard.php">
+                <i class="fas fa-home"></i> Beranda
+            </a>
+            <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="stok.php">
+                <i class="fas fa-box"></i> Stok
+            </a>
+            <a href="st.php">
+                <i class="fas fa-users"></i> Staff Gudang
+            </a>
+            <a href="../logout.php" style="width:80%" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Keluar
+            </a>
+
             </div>
+
             <div class="col-12 col-lg-10 col-xl-10 col-md-8 col-sm-9 content">
                 <?php if ($id_barang): ?>
                     <!-- Halaman Detail Barang -->
@@ -237,7 +233,7 @@ if ($id_barang) {
                             <h5><strong>Riwayat Stok</strong></h5>
                             <button class="download-btn" id="downloadPDF"><i class="fas fa-download"></i> Download PDF</button>
                         </div>
-                        <table class="table table-bordered">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -262,8 +258,8 @@ if ($id_barang) {
                     </div>
                 <?php else: ?>
                     <!-- Halaman Daftar Barang -->
-                    <table class="table table-bordered text-center mt-5">
-                        <thead>
+                    <table class="table table-striped mt-5">
+                        <thead style="background-color: rgb(218, 199, 228);">
                             <tr>
                                 <th>No</th>
                                 <th>ID</th>
@@ -276,8 +272,11 @@ if ($id_barang) {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($barangList as $index => $rawr): ?>
-                                <tr>
+                            <?php foreach ($barangList as $index => $rawr): 
+                                $rowStyle = ($index % 2 == 1) ? 'background-color: rgb(218, 199, 228);;' : 'background-color: #fff';
+                                ?>
+                                
+                                <tr style="<?= $rowStyle ?>">
                                     <td><?= $index + 1 ?></td>
                                     <td><?= htmlspecialchars($rawr['id_barang']) ?></td>
                                     <td><?= htmlspecialchars($rawr['nama_barang']) ?></td>
@@ -286,10 +285,7 @@ if ($id_barang) {
                                     <td><?= htmlspecialchars($rawr['stok']) ?></td>
                                     <td><?= htmlspecialchars($rawr['nama']) ?></td>
                                     <td>
-                                        <div class="center-button-container">
-                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success" style="display: flex; align-items: center; gap: 5px; background-color: #28a745; border-color: #28a745; width: 100px; padding: 5px 10px;">
-                                            <i class="fas fa-info-circle"></i> Detail
-                                        </a>
+                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success">Detail</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

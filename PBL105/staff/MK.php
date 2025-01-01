@@ -1,19 +1,27 @@
 <!DOCTYPE html>
-<?php include"../koneksi.php"; ?>
+<?php include"../koneksi.php"; 
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION['role'])) {
+    echo "<script>alert('Anda bukan staff!'); window.location.href = '../logout.php';</script>";
+    exit();
+}
+?>
 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Management</title>
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Stock Management</title>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
     <style>
         body {
             margin: 0;
             font-family: "Roboto Mono", monospace;
-            font-optical-sizing: auto;
-            background-color: hsla(0, 0.00%, 95.30%, 0.97);
+            margin: 0;
+            padding: 0;
+            background-color:hsla(0, 0.00%, 95.30%, 0.97);
             overflow-x: hidden;
         }
 
@@ -22,8 +30,8 @@
             top: 0;
             left: 0;
             width: 200px;
+            background-color:rgb(218, 199, 228);
             height: 100vh;
-            background-color: rgb(218, 199, 228);
             padding: 20px;
             border-radius: 5px;
         }
@@ -46,7 +54,8 @@
         }
 
         .sidebar a:hover {
-            background-color: rgb(252, 246, 255);
+            background-color:rgb(252, 246, 255);
+            width: 100%;
             border-radius: 20px;
         }
 
@@ -55,45 +64,49 @@
             bottom: 20px;
             left: 20px;
         }
-
         .stok-title {
-    font-size: 25px; 
-    font-weight: bold; 
-    text-align: center; 
-    margin-bottom: 20px; }
+            font-size: 25px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+        .table thead {
+            background-color: rgb(218, 199, 228); 
+        }
 
-        .divider {
-    border: none;
-    height: 2px;
-    background-color: #4a00e0;
-    margin: 10px 0;
-}
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #fff; 
+        }
 
+        .table-striped tbody tr:nth-child(even) {
+            background-color: rgb(218, 199, 228); 
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-2 col-xl-2 col-md-4 col-sm-6 sidebar">
-                <img src="http://localhost/PBL-105-main/PBL105/gambar/1.png" alt="Logo" width="140" height="80">
+            <img src="../gambar/1.png" alt="Logo" width="140" height="80">
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr class="divider">
-                <a href="dashboard.php">
-                    <i class="fas fa-home"></i> Beranda
-                </a>
-                <a href="stok.php">
-                    <i class="fas fa-box"></i> Stok
-                </a>
-                <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
+
+                    <a href="dashboard.php">
+                        <i class="fas fa-home"></i> Beranda
+                    </a>
+                    <a href="stok.php">
+                        <i class="fas fa-box"></i> Stok
+                    </a>
+                    <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
                     <i class="fas fa-exchange-alt"></i> Barang Masuk/Keluar
                 </a>
-                <a href="../logout.php" style="width:80%" class="logout">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
-                </a>
+                    <a href="../logout.php" style="width:80%" class="logout">
+                        <i class="fas fa-sign-out-alt"></i> Keluar
+                    </a>
+
             </div>
-        
+        </div>
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
                 <table class="table table-striped">
                     <thead>
@@ -255,84 +268,83 @@
                     </thead>
 
                     <?php
-                $jenis = $_GET['jenis'] ?? 'all';
+                    $jenis = $_GET['jenis'] ?? 'all';
 
-                if ($jenis == 'masuk') {
-                $query = "SELECT 
-                    tm.id_transaksi_masuk AS id_transaksi, 
-                    tm.id_barang, 
-                    tm.jumlah_masuk AS jumlah, 
-                    tm.tanggal_masuk AS tanggal, 
-                    'Masuk' AS jenis_transaksi, 
-                    u.nama AS nama_user, 
-                    NULL AS catatan 
-                FROM transaksi_masuk tm
-                JOIN user u ON tm.id_user = u.id_user";
-                } elseif ($jenis == 'keluar') {
-                $query = "SELECT 
-                    tk.id_transaksi_keluar AS id_transaksi, 
-                    tk.id_barang, 
-                    tk.jumlah_keluar AS jumlah, 
-                    tk.tanggal_keluar AS tanggal, 
-                    'Keluar' AS jenis_transaksi, 
-                    u.nama AS nama_user, 
-                    tk.catatan 
-                FROM transaksi_keluar tk
-                JOIN user u ON tk.id_user = u.id_user";
-                } else {
-                $query = "SELECT 
-                    id_transaksi, 
-                    id_barang, 
-                    jumlah, 
-                    tanggal, 
-                    jenis_transaksi, 
-                    nama_user, 
-                    catatan
-                FROM (
-                SELECT 
-                    tm.id_transaksi_masuk AS id_transaksi, 
-                    tm.id_barang, 
-                    tm.jumlah_masuk AS jumlah, 
-                    tm.tanggal_masuk AS tanggal, 
-                    'Masuk' AS jenis_transaksi, 
-                    u.nama AS nama_user, 
-                    NULL AS catatan 
-                FROM transaksi_masuk tm
-                JOIN user u ON tm.id_user = u.id_user
-                        
-                UNION ALL
-                
-                SELECT 
-                        tk.id_transaksi_keluar AS id_transaksi, 
-                        tk.id_barang, 
-                        tk.jumlah_keluar AS jumlah, 
-                        tk.tanggal_keluar AS tanggal, 
-                        'Keluar' AS jenis_transaksi, 
-                        u.nama AS nama_user, 
-                        tk.catatan 
-                    FROM transaksi_keluar tk
-                    JOIN user u ON tk.id_user = u.id_user
-                ) AS all_transaksi";
-                }
+                    if ($jenis == 'masuk') {
+                        $query = "SELECT 
+                                    tm.id_transaksi_masuk AS id_transaksi, 
+                                    tm.id_barang, 
+                                    tm.jumlah_masuk AS jumlah, 
+                                    tm.tanggal_masuk AS tanggal, 
+                                    'Masuk' AS jenis_transaksi, 
+                                    u.nama AS nama_user, 
+                                    NULL AS catatan 
+                                FROM transaksi_masuk tm
+                                JOIN user u ON tm.id_user = u.id_user
+                                ORDER BY tm.tanggal_masuk DESC";  
+                    } elseif ($jenis == 'keluar') {
+                        $query = "SELECT 
+                                    tk.id_transaksi_keluar AS id_transaksi, 
+                                    tk.id_barang, 
+                                    tk.jumlah_keluar AS jumlah, 
+                                    tk.tanggal_keluar AS tanggal, 
+                                    'Keluar' AS jenis_transaksi, 
+                                    u.nama AS nama_user, 
+                                    tk.catatan 
+                                FROM transaksi_keluar tk
+                                JOIN user u ON tk.id_user = u.id_user
+                                ORDER BY tk.tanggal_keluar DESC"; 
+                    } else {
+                        $query = "SELECT 
+                                    id_transaksi, 
+                                    id_barang, 
+                                    jumlah, 
+                                    tanggal, 
+                                    jenis_transaksi, 
+                                    nama_user, 
+                                    catatan
+                                FROM (
+                                    SELECT 
+                                        tm.id_transaksi_masuk AS id_transaksi, 
+                                        tm.id_barang, 
+                                        tm.jumlah_masuk AS jumlah, 
+                                        tm.tanggal_masuk AS tanggal, 
+                                        'Masuk' AS jenis_transaksi, 
+                                        u.nama AS nama_user, 
+                                        NULL AS catatan 
+                                    FROM transaksi_masuk tm
+                                    JOIN user u ON tm.id_user = u.id_user
+
+                                    UNION ALL
+
+                                    SELECT 
+                                        tk.id_transaksi_keluar AS id_transaksi, 
+                                        tk.id_barang, 
+                                        tk.jumlah_keluar AS jumlah, 
+                                        tk.tanggal_keluar AS tanggal, 
+                                        'Keluar' AS jenis_transaksi, 
+                                        u.nama AS nama_user, 
+                                        tk.catatan 
+                                    FROM transaksi_keluar tk
+                                    JOIN user u ON tk.id_user = u.id_user
+                                ) AS all_transaksi
+                                ORDER BY tanggal DESC"; 
+                    }
 
                     $stmt = $conn->prepare($query);
                     $stmt->execute();
                     $transaksi = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     ?>
 
-                    <script>
-                        new DataTable('#example');
-                    </script>
-
-                    <table id="example" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID Transaksi</th>
-                                <th>ID Barang</th>
-                                <th>Jumlah</th>
-                                <th>Tanggal</th>
-                                <th>
-                                    <div class="dropdown">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID Transaksi</th>
+                            <th>ID Barang</th>
+                            <th>Jumlah</th>
+                            <th>Tanggal</th>
+                            <th>
+                                <div class="dropdown">
                                     <button type="button" style="background:none;border:none;" class="fw-bold dropdown-toggle" data-bs-toggle="dropdown">
                                         Jenis Transaksi
                                     </button>
@@ -341,27 +353,29 @@
                                         <li><a class="dropdown-item" href="mk.php?jenis=keluar">Keluar</a></li>
                                         <li><a class="dropdown-item" href="mk.php?jenis=all">Semua</a></li>
                                     </ul>
-                                    </div>
-                                </th>
-                                <th>Nama User</th>
-                                <th>Catatan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            foreach ($transaksi as $data) { ?>
-                                 <tr>
-                                        <td> <?= $data['id_transaksi']; ?> </td>
-                                        <td><?= $data['id_barang']; ?>  </td>
-                                        <td><?= $data['jumlah'] ?>  </td>
-                                        <td><?= $data['tanggal'] ?>  </td>
-                                        <td><?= $data['jenis_transaksi'] ?>  </td>
-                                        <td><?= $data['nama_user'] ?>  </td>
-                                        <td><?= ($data['catatan'] ?? '-') ?>  </td>
-                                    </tr>
-                           <?php }
+                                </div>
+                            </th>
+                            <th>Nama User</th>
+                            <th>Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            foreach ($transaksi as $data) { 
+                            $formatTanggal = date("d-m-Y", strtotime($data['tanggal']));
                             ?>
-                        </tbody>
+                            <tr>
+                                <td><?= $data['id_transaksi']; ?></td>
+                                <td><?= $data['id_barang']; ?></td>
+                                <td><?= $data['jumlah']; ?></td>
+                                <td><?= $formatTanggal ?></td>
+                                <td><?= $data['jenis_transaksi']; ?></td>
+                                <td><?= $data['nama_user']; ?></td>
+                                <td><?= ($data['catatan'] ?? '-'); ?></td>
+                            </tr>
+                        <?php }
+                        ?>
+                    </tbody>
                     </table>
                 </table>
             </div>

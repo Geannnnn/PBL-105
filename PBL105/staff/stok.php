@@ -1,21 +1,28 @@
-
 <!DOCTYPE html>
-<html lang="en">
-    <?php include"../koneksi.php"; ?>
+<?php include"../koneksi.php"; 
 
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION['role'])) {
+    echo "<script>alert('Anda bukan staff!'); window.location.href = '../logout.php';</script>";
+    exit();
+}
+?>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            background-color: hsla(0, 0.00%, 95.30%, 0.97);
-            overflow-x: hidden;
             font-family: "Roboto Mono", monospace;
             font-optical-sizing: auto;
+            background-color: hsla(0, 0.00%, 95.30%, 0.97);
+            overflow-x: hidden;
         }
 
 
@@ -25,7 +32,7 @@
             left: 0;
             width: 200px;
             height: 100vh;
-            background-color:  rgb(218, 199, 228);
+            background-color:rgb(218, 199, 228);
             padding: 20px;
             border-radius: 5px;
         }
@@ -48,7 +55,7 @@
         }
 
         .sidebar a:hover {
-            background-color: rgb(252, 246, 255);
+            background-color:rgb(252, 246, 255);
             border-radius: 20px;
         }
 
@@ -57,48 +64,40 @@
             bottom: 20px;
             left: 20px;
         }
-
         .stok-title {
-    font-size: 25px; 
-    font-weight: bold; 
-    text-align: center; 
-    margin-bottom: 20px; }
-
-        .divider {
-    border: none;
-    height: 2px;
-    background-color: #4a00e0;
-    margin: 10px 0;
-}
-
+            font-size: 25px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-2 col-xl-2 col-md-4 col-sm-6 sidebar">
-                <img src="http://localhost/PBL-105-main/PBL105/gambar/1.png" alt="Logo" width="140" height="80">
+            <img src="../gambar/1.png" alt="Logo" width="140" height="80">
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr class="divider">
-                <a href="dashboard.php">
-                    <i class="fas fa-home"></i> Beranda
-                </a>
-                <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
-                    <i class="fas fa-box"></i> Stok
-                </a>
-                <a href="MK.php">
+                    
+                    <a href="dashboard.php">
+                        <i class="fas fa-home"></i> Beranda
+                    </a>
+                    <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
+                        <i class="fas fa-box"></i> Stok
+                    </a>
+                    <a href="MK.php">
                     <i class="fas fa-exchange-alt"></i> Barang Masuk/Keluar
                 </a>
-                <a href="../logout.php" style="width:80%" class="logout">
-                    <i class="fas fa-sign-out-alt"></i> Keluar
-                </a>
+                    <a href="../logout.php" style="width:80%" class="logout">
+                        <i class="fas fa-sign-out-alt"></i> Keluar
+                    </a>
             </div>
-            
+        </div>
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
-                <table class="table table-bordered text-center mt-5">
-                    <?php if(isset($_GET['kategori'])) : ?>
+                <table class="table table-striped mt-5" style="border-collapse: collapse;">
+                    <?php if(isset($_GET['kategori']) || !isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION['role'])) : ?>
                         
                         <?php if(isset($_POST['addkatego'])) {
                             
@@ -243,7 +242,7 @@
                         </table>
                         </div>
 
-                    <?php elseif(isset($_GET['satuan'])) : ?>
+                    <?php elseif(isset($_GET['satuan']) || !isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION['role'])) : ?>
 
                         <?php if(isset($_POST['tamSatuan'])){
                             $nama_satuan = $_POST['nama_satuan'];
@@ -390,10 +389,10 @@
 
                     <?php else: ?>
 
-                    <thead>
+                    <thead style="background-color: rgb(218, 199, 228);">
                         
                     <form action="" method="post">
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#tambar" class="btn btn-success">Tambah</button>
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#tambar" class="btn btn-success float-end">Tambah</button>
                     </form>
 
                     <div class="modal fade" id="tambar">
@@ -567,22 +566,31 @@
                         <th>No</th>
                         <th>ID</th>
                         <th>Nama Barang</th>
-                        <th><form action="" method="get"><button type="submit" style="border:none; background:none; font-weight:bold;" name="kategori">+ Kategori</button></form></th>
-                        <th><form action="" method="get"><button type="submit" style="border:none; background:none; font-weight:bold;" name="satuan">+ Satuan</button></form></th>
+                        <th>
+                            <form action="" method="get" style="display: inline;">
+                                <button type="submit" style="border:none; background:none; font-weight:bold;" name="kategori">+ Kategori</button>
+                            </form>
+                        </th>
+                        <th>
+                            <form action="" method="get" style="display: inline;">
+                                <button type="submit" style="border:none; background:none; font-weight:bold;" name="satuan">+ Satuan</button>
+                            </form>
+                        </th>
                         <th>Stok</th>
                         <th>User</th>
                         <th>Aksi</th>
                     </tr>
                     </thead>
+                    <tbody>
                     <?php 
                     $stmt = $conn->prepare("SELECT * FROM barang JOIN user on barang.id_user = user.id_user JOIN kategori on barang.id_kategori=kategori.id_kategori JOIN satuan on barang.id_satuan=satuan.id_satuan");
                     $stmt->execute();
                     $no = 1;
 
                     foreach($stmt as $rawr) {
+                        $rowStyle = ($no % 2 == 1) ? 'background-color: #fff;' : 'background-color: rgb(218, 199, 228);';
                     ?>
-                    <tbody>
-                    <tr>
+                    <tr style="<?= $rowStyle ?>">
                         <td><?= $no++ ?></td>
                         <td><?= $rawr['id_barang'] ?></td>
                         <td><?= $rawr['nama_barang'] ?></td>
