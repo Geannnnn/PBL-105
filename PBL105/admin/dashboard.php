@@ -235,7 +235,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                             <i id="bellIcon" class="fas fa-bell">
                                 <span id="alertCount"><?= count($lowStockItems) ?></span>
                             </i>
-                            <i class="fas fa-user-circle"></i>
                         </div>
                         <div id="alertDropdown">
                             <div id="alertBox"></div>
