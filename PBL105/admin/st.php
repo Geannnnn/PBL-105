@@ -172,8 +172,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                                     <input type="password" class="form-control" id="password" name="password" required>
                                 </div>
                                 <div class="modal-add-account mb-3">
-                                    <button type="submit" name="adduser" class="btn btn-tambah">Tambah</button>
-                                    <button type="reset" class="btn btn-reset">Batal</button>
+                                    <button type="submit" name="adduser" class="btn btn-tambah">
+                                    <i class="fa fa-plus-circle"></i> Tambah
+                                    </button>
+                                    <button type="reset" class="btn btn-reset">
+                                    <i class="fa fa-times-circle" ></i> Batal
+                                    </button>
                                 </div>
                             </form>
                         </div>
