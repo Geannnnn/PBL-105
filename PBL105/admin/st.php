@@ -230,8 +230,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                                     <p>Apakah anda yakin ingin menghapus akun ini?</p>
                                     <form action="" method="post">
                                         <input type="hidden" name="id_user" value="<?= $rawr['id_user'];?>">
-                                        <button type="submit" name="hapususer" class="btn btn-danger">Hapus</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" name="hapususer" class="btn btn-danger">
+                                        <i class="fa-solid fa-trash-can"></i> Hapus
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fa fa-times-circle" ></i> Batal
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -243,7 +247,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">Edit Akun</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" style="border:none;"></button>
                             </div>
                             <div class="modal-body">
                                 <form action="" method="post">
@@ -261,8 +264,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                                         <input type="text" class="form-control" id="password" name="password" value="<?= $rawr['password'] ?>" required>
                                     </div>
                                     <div class="modal-edit-account mb-3">
-                                    <button type="submit" name="edituser" class="btn btn-tambah">Ubah</button>
-                                    <button type="reset" class="btn btn-reset">Batal</button>
+                                    <button type="submit" name="edituser" class="btn btn-tambah">
+                                    <i class="fa fa-check-circle" ></i> Ubah
+                                    </button>
+                                    <button type="reset" class="btn btn-reset" data-bs-dismiss="modal">
+                                    <i class="fa fa-times-circle" ></i> Batal
+                                    </button>
                                 </div>
                                 </form>
                             </div>
