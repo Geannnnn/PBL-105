@@ -287,7 +287,9 @@ if ($id_barang) {
                                     <td><?= htmlspecialchars($rawr['stok']) ?></td>
                                     <td><?= htmlspecialchars($rawr['nama']) ?></td>
                                     <td>
-                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success">Detail</a>
+                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success">
+                                            <i class="fas fa-info-circle"></i> Detail
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
