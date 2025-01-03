@@ -149,7 +149,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
             </div>
 
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
-            <h2 class="mt-5" style="margin-left:10px;"><button type="button" data-bs-toggle="modal" data-bs-target="#addUser" style="border: none; background:none;" ><i class="fa-solid fa-circle-plus"></i></button>Akun Staff</h2>
+            <h2 class="mt-5" style="margin-left:10px;"><button type="button" data-bs-toggle="modal" data-bs-target="#addUser" style="border: none; background:none;" >
+                <i class="fas fa-user-plus"></i></button>Akun Staff
+            </h2>
             <div class="modal fade" id="addUser">
                 <div class="modal-dialog">
                     <div class="modal-content">
