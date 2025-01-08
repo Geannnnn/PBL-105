@@ -13,6 +13,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -66,7 +69,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
             font-weight: bold; 
             text-align: center; 
             margin-bottom: 20px; 
-            padding-bottom: 10px;
         }
     </style>
 </head>
@@ -78,12 +80,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
                     
                     <a href="dashboard.php">
                         <i class="fas fa-home"></i> Beranda
                     </a>
-                    <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
+                    <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="stok.php">
                         <i class="fas fa-box"></i> Stok
                     </a>
                     <a href="MK.php">
@@ -98,36 +99,48 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                 <table class="table table-striped mt-5" style="border-collapse: collapse;">
                     <?php if(isset($_GET['kategori']) || !isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION['role'])) : ?>
                         
-                        <?php if(isset($_POST['addkatego'])) {
+                        <?php if (isset($_POST['addkatego'])) {
+
+                                $nama_kategori = $_POST['nama_kategori'];
+                                $id = $_SESSION['id'];  
+
+                                try {
+                                    $s = $conn->prepare("INSERT INTO kategori values (null, '$id', '$nama_kategori')");
+                                    $s->execute();
+                                    echo "<script>alert('Data berhasil ditambahkan!'); window.location.href = 'stok.php?kategori';</script>";
+                                } catch (Exception $e) {
+                                    echo "<script>alert('Gagal menambahkan data.'); window.location.href = 'stok.php?kategori';</script>";
+                                }
+                            }elseif (isset($_POST['hapuskate'])) {
+                                $id_k = $_POST['id_kategori'];
                             
-                            $nama_kategori = $_POST['nama_kategori'];
-                            $jenis_kategori = $_POST['jenis_kategori'];
-                            $id = $_SESSION['id'];  
+                                try {
+                                    // Menghapus data yang terkait dengan kategori
+                                    $qs = $conn->prepare("DELETE FROM barang WHERE id_kategori = '$id_k'");
+                                    $qs->execute();
                             
-
-                            $s = $conn->prepare("INSERT INTO kategori values (null,'$id','$nama_kategori','$jenis_kategori')");
-                            $s->execute();
-                            header("location:stok.php?kategori");
-                        }elseif (isset($_POST['hapuskate'])) {
-                            $id_k = $_POST['id_kategori'];
-
-
-                            $qs = $conn->prepare("DELETE FROM barang WHERE id_kategori = '$id_k'");
-                            $qs ->execute();
-                            $s = $conn->prepare("Delete from kategori where id_kategori = '$id_k'");
-                            $s->execute();
-
-                            header("location:stok.php?kategori");
-                        }elseif (isset($_POST['editkate'])) {
+                                    // Menghapus kategori
+                                    $s = $conn->prepare("DELETE FROM kategori WHERE id_kategori = '$id_k'");
+                                    $s->execute();
+                            
+                                    echo "<script>alert('Data berhasil dihapus!'); window.location.href = 'stok.php?kategori';</script>";
+                                } catch (Exception $e) {
+                                    echo "<script>alert('Gagal menghapus data.'); window.location.href = 'stok.php?kategori';</script>";
+                                }
+                            }elseif (isset($_POST['editkate'])) {
                             $id_k = $_POST['id_kategori'];
                             $nama_k = $_POST['nama_kategori'];
-                            $jenis_k = $_POST['jenis_kategori'];
                             $id = $_SESSION['id'];
-
-                            $s = $conn->prepare("UPDATE kategori SET nama_kategori = '$nama_k', id_user='$id' ,jenis_kategori = '$jenis_k' WHERE id_kategori = '$id_k'");
-                            $s->execute();
-                            header("location:stok.php?kategori");
-                        } ?>
+                        
+                            try {
+                                $s = $conn->prepare("UPDATE kategori SET nama_kategori = '$nama_k', id_user = '$id' WHERE id_kategori = '$id_k'");
+                                $s->execute();
+                                echo "<script>alert('Data berhasil diperbarui!'); window.location.href = 'stok.php?kategori';</script>";
+                            } catch (Exception $e) {
+                                echo "<script>alert('Gagal memperbarui data.'); window.location.href = 'stok.php?kategori';</script>";
+                            }
+                        }
+                        ?>
                         
 
                         <div class="table-responsive">
@@ -150,10 +163,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                                      <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="Nama Kategori" required>
                                                      <label for="nama_kategori" class="form-label">Nama Kategori</label>
                                                  </div>
-                                                 <div class="form-floating mb-5">
-                                                     <input type="text" class="form-control" id="jenis_kategori" name="jenis_kategori" placeholder="Jenis Kategori" required>
-                                                     <label for="jenis_kategori" class="form-label">Jenis Kategori</label>
-                                                 </div>
                                                  <button type="submit" name="addkatego" class="btn btn-primary">Simpan</button>
                                              </form>
                                         </div>
@@ -164,7 +173,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                     <th>No</th>
                                     <th>Id Kategori</th>
                                     <th>Nama Kategori</th>
-                                    <th>Jenis Kategori</th>
                                     <th>User</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -181,7 +189,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                     <td><?= $no++ ?></td>
                                     <td><?= $rawr['id_kategori']; ?></td>
                                     <td><?= $rawr['nama_kategori'] ?></td>
-                                    <td><?= $rawr['jenis_kategori'] ?></td>
                                     <td><?= $rawr['nama'] ?></td>
                                     <td>
                                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#hapusKate<?= $rawr['id_kategori']; ?>">
@@ -224,11 +231,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                                         <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="Nama Kategori" value="<?= $rawr['nama_kategori'];?>" required>
                                                         <label for="nama_kategori" class="form-label">Nama Kategori</label>
                                                      </div>
-                                                     <div class="form-floating mb-3">
-                                                        <input type="hidden" name="jenis_kategori" value="<?= $rawr['jenis_kategori'];?>">
-                                                        <input type="text" class="form-control" id="jenis_kategori" name="jenis_kategori" placeholder="Jenis Kategori" value="<?= $rawr['jenis_kategori'];?>" required>
-                                                        <label for="jenis_kategori" class="form-label">Jenis Kategori</label>
-                                                     </div>
                                                      <button type="submit" name="editkate" class="btn btn-primary mt-3">Simpan</button>
                                                 </form>
                                             </div>
@@ -251,6 +253,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                             $s = $conn->prepare("INSERT INTO satuan VALUES (null,'$id','$nama_satuan','$jumlah_satuan')");
                             $s->execute();
                             header("location: stok.php?satuan");
+                            exit();
 
                         }elseif(isset($_POST['hapusSatuan'])){
 
@@ -261,6 +264,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                             $s = $conn->prepare("DELETE FROM satuan WHERE id_satuan = $id_satuan");
                             $s->execute();
                             header("location: stok.php?satuan");
+                            exit();
                         }elseif(isset($_POST['editSatuan'])) {
                             $id_satuan = $_POST['id_satuan'];
                             $nama_satuan = $_POST['nama_satuan'];
@@ -269,6 +273,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                             $s = $conn->prepare("UPDATE satuan SET nama_satuan = '$nama_satuan', jumlah_satuan = '$jumlah_satuan' WHERE id_satuan = $id_satuan");
                             $s->execute();
                             header("location: stok.php?satuan");
+                            exit();
                         } ?>
 
 
@@ -412,7 +417,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                             <label for="nama_barang" class="form-label">Nama Barang</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <select class="form-select" name="barang_kategori" id="kat">
+                                            <select class="form-select" name="barang_kategori" id="kat" required>
                                                 <option value="" selected disabled>Pilih Kategori</option>
                                                 <?php
                                                 $s = $conn->prepare("SELECT * FROM kategori");
@@ -424,7 +429,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                             <label for="kat">Kategori</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <select class="form-select" name="barang_satuan" id="sat">
+                                            <select class="form-select" name="barang_satuan" id="sat" required>
                                                 <option value="" selected disabled>Pilih Satuan</option>
                                                 <?php
                                                 $s = $conn->prepare("SELECT * FROM satuan");
@@ -436,11 +441,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                             <label for="sat">Satuan</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input type="number" class="form-control" name="stok_barang" id="stk" placeholder="Stok">
+                                            <input type="number" class="form-control" name="stok_barang" id="stk" placeholder="Stok" readonly >
                                             <label for="stk">Stok</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input type="file" class="form-control" name="gambar" id="gam">
+                                            <input type="file" class="form-control" name="gambar" id="gam" required>
                                             <label for="gam">Gambar</label>
                                         </div>
                                         <button type="submit" name="addBarang" class="btn btn-primary mt-3">Simpan</button>
@@ -517,34 +522,37 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
 
                         if ($success) {
                             if (!empty($gambar) && move_uploaded_file($gambar_tmp, $gambar_folder)) {
-                                echo "Barang berhasil ditambahkan dengan gambar!";
+                                echo "<script>alert('Barang berhasil ditambahkan dengan gambar!'); window.location.href = 'stok.php';</script>";
                             } elseif (empty($gambar)) {
-                                echo "Barang berhasil ditambahkan tanpa gambar!";
+                                echo "<script>alert('Barang berhasil ditambahkan tanpa gambar!'); window.location.href = 'stok.php';</script>";
                             } else {
-                                echo "Barang berhasil ditambahkan, tetapi gagal mengunggah gambar.";
+                                echo "<script>alert('Barang berhasil ditambahkan, tetapi gagal mengunggah gambar.'); window.location.href = 'stok.php';</script>";
                             }
                             error_reporting(0);
-                            header("Location: stok.php");
-                            exit;
                         } else {
-                            echo "Gagal menyimpan data ke database.";
+                            echo "<script>alert('Gagal menyimpan data ke database.'); window.location.href = 'stok.php';</script>";
                         }
+                        
                     }
-                    elseif(isset($_POST['deleteBarang'])) {
+                    elseif (isset($_POST['deleteBarang'])) {
                         $id = $_POST['id'];
-
-                        $s = $conn->prepare("Delete from barang where id_barang = '$id'");
-                        $s->execute();
-                        error_reporting(0);
-                        header("location:stok.php");
-                    }elseif(isset($_POST['editBarang'])) {
+                    
+                        try {
+                            $s = $conn->prepare("DELETE FROM barang WHERE id_barang = '$id'");
+                            $s->execute();
+                    
+                            echo "<script>alert('Barang berhasil dihapus!'); window.location.href = 'stok.php';</script>";
+                        } catch (Exception $e) {
+                            echo "<script>alert('Gagal menghapus barang.'); window.location.href = 'stok.php';</script>";
+                        }
+                    }elseif (isset($_POST['editBarang'])) {
                         $fo;
                         if ($_FILES['gambar']['name'] == '') {
                             $fo = $_POST['odd'];
-                        }else{
+                        } else {
                             $fo = $_FILES['gambar']['name'];
                         }
-
+                    
                         $awd = $_POST['id_barang'];
                         $nb = $_POST['nama_barang'];
                         $k = $_POST['barang_kategori'];
@@ -552,13 +560,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                         $stok = $_POST['stok_barang'];
                         $gas = $_FILES['gambar']['tmp_name'];
                         $isd = $_SESSION['id'];
-
-                        $s = $conn->prepare("UPDATE barang SET id_kategori = '$k', nama_barang = '$nb', stok = '$stok', gambar ='$fo', id_user = '$isd' where id_barang = '$awd' ");
-                        $s->execute();
-                        move_uploaded_file($gas, '../gambar/'. $fo);
-                        error_reporting(0);
-                        header("location: refresh:0");
-                    } 
+                    
+                        try {
+                            $s = $conn->prepare("UPDATE barang SET id_kategori = '$k', nama_barang = '$nb', stok = '$stok', gambar = '$fo', id_user = '$isd' WHERE id_barang = '$awd'");
+                            $s->execute();
+                            
+                            move_uploaded_file($gas, '../gambar/' . $fo);
+                    
+                            echo "<script>alert('Data barang berhasil diperbarui!'); window.location.href = 'stok.php';</script>";
+                        } catch (Exception $e) {
+                            echo "<script>alert('Gagal memperbarui data barang.'); window.location.href = 'stok.php';</script>";
+                        }
+                    }
                     ?>
 
                     <tr>
@@ -613,7 +626,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                 <form action="" method="post">
                                 <div class="modal-header">
                                     <input type="hidden" name="id" value="<?= $rawr['id_barang'] ?>">
-                                    <h5 class="modal-title"><p><strong>Apakah anda yakin ingin menhapus data <?= $rawr['nama_barang']; ?></strong></p></h5>
+                                    <h5 class="modal-title"><p><strong>Apakah anda yakin ingin menghapus data <?= $rawr['nama_barang']; ?></strong></p></h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">

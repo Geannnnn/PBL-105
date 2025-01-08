@@ -69,7 +69,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
             font-weight: bold; 
             text-align: center; 
             margin-bottom: 20px; 
-            padding-bottom: 10px;
         }
         .table thead {
             background-color: rgb(218, 199, 228); 
@@ -92,7 +91,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
 
                     <a href="dashboard.php">
                         <i class="fas fa-home"></i> Beranda
@@ -276,31 +274,35 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                         $query = "SELECT 
                                     tm.id_transaksi_masuk AS id_transaksi, 
                                     tm.id_barang, 
-                                    tm.jumlah_masuk AS jumlah, 
+                                    CONCAT(tm.jumlah_masuk, ' ', s.nama_satuan) AS jumlah_satuan, 
                                     tm.tanggal_masuk AS tanggal, 
                                     'Masuk' AS jenis_transaksi, 
                                     u.nama AS nama_user, 
                                     NULL AS catatan 
                                 FROM transaksi_masuk tm
                                 JOIN user u ON tm.id_user = u.id_user
-                                ORDER BY tm.tanggal_masuk DESC";  
+                                JOIN barang b ON tm.id_barang = b.id_barang
+                                JOIN satuan s ON b.id_satuan = s.id_satuan
+                                ORDER BY tm.tanggal_masuk DESC";
                     } elseif ($jenis == 'keluar') {
                         $query = "SELECT 
                                     tk.id_transaksi_keluar AS id_transaksi, 
                                     tk.id_barang, 
-                                    tk.jumlah_keluar AS jumlah, 
+                                    CONCAT(tk.jumlah_keluar, ' ', s.nama_satuan) AS jumlah_satuan, 
                                     tk.tanggal_keluar AS tanggal, 
                                     'Keluar' AS jenis_transaksi, 
                                     u.nama AS nama_user, 
                                     tk.catatan 
                                 FROM transaksi_keluar tk
                                 JOIN user u ON tk.id_user = u.id_user
-                                ORDER BY tk.tanggal_keluar DESC"; 
+                                JOIN barang b ON tk.id_barang = b.id_barang
+                                JOIN satuan s ON b.id_satuan = s.id_satuan
+                                ORDER BY tk.tanggal_keluar DESC";
                     } else {
                         $query = "SELECT 
                                     id_transaksi, 
                                     id_barang, 
-                                    jumlah, 
+                                    jumlah_satuan, 
                                     tanggal, 
                                     jenis_transaksi, 
                                     nama_user, 
@@ -309,29 +311,34 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                     SELECT 
                                         tm.id_transaksi_masuk AS id_transaksi, 
                                         tm.id_barang, 
-                                        tm.jumlah_masuk AS jumlah, 
+                                        CONCAT(tm.jumlah_masuk, ' ', s.nama_satuan) AS jumlah_satuan, 
                                         tm.tanggal_masuk AS tanggal, 
                                         'Masuk' AS jenis_transaksi, 
                                         u.nama AS nama_user, 
                                         NULL AS catatan 
                                     FROM transaksi_masuk tm
                                     JOIN user u ON tm.id_user = u.id_user
-
+                                    JOIN barang b ON tm.id_barang = b.id_barang
+                                    JOIN satuan s ON b.id_satuan = s.id_satuan
+                    
                                     UNION ALL
-
+                    
                                     SELECT 
                                         tk.id_transaksi_keluar AS id_transaksi, 
                                         tk.id_barang, 
-                                        tk.jumlah_keluar AS jumlah, 
+                                        CONCAT(tk.jumlah_keluar, ' ', s.nama_satuan) AS jumlah_satuan, 
                                         tk.tanggal_keluar AS tanggal, 
                                         'Keluar' AS jenis_transaksi, 
                                         u.nama AS nama_user, 
                                         tk.catatan 
                                     FROM transaksi_keluar tk
                                     JOIN user u ON tk.id_user = u.id_user
+                                    JOIN barang b ON tk.id_barang = b.id_barang
+                                    JOIN satuan s ON b.id_satuan = s.id_satuan
                                 ) AS all_transaksi
-                                ORDER BY tanggal DESC"; 
+                                ORDER BY tanggal DESC";
                     }
+                    
 
                     $stmt = $conn->prepare($query);
                     $stmt->execute();
@@ -369,7 +376,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                             <tr>
                                 <td><?= $data['id_transaksi']; ?></td>
                                 <td><?= $data['id_barang']; ?></td>
-                                <td><?= $data['jumlah']; ?></td>
+                                <td><?= $data['jumlah_satuan']; ?></td>
                                 <td><?= $formatTanggal ?></td>
                                 <td><?= $data['jenis_transaksi']; ?></td>
                                 <td><?= $data['nama_user']; ?></td>

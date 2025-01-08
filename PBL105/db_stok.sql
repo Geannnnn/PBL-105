@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 18, 2024 at 07:00 AM
+-- Generation Time: Jan 08, 2025 at 08:00 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -42,9 +42,9 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id_barang`, `id_kategori`, `nama_barang`, `id_user`, `id_satuan`, `stok`, `gambar`) VALUES
-('AM01', 1, 'Air Mineral', 8, 6, 135, '676013150caf5_sanford botol.png'),
-('B01', 4, 'Burger', 8, 6, 10, '6760132218b68_burger kink.png'),
-('FF01', 3, 'French Fries', 8, 1, 133, '6760133224211_frenchfreis.png');
+('AM01', 1, 'Air Mineral', 8, 6, 1, '676013150caf5_sanford botol.png'),
+('B01', 4, 'Burger', 8, 6, 9, '6760132218b68_burger kink.png'),
+('FF01', 1, 'French Fries', 8, 1, 123, '675fb1d080d42_frenchfreis.png');
 
 -- --------------------------------------------------------
 
@@ -55,18 +55,17 @@ INSERT INTO `barang` (`id_barang`, `id_kategori`, `nama_barang`, `id_user`, `id_
 CREATE TABLE `kategori` (
   `id_kategori` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
-  `nama_kategori` varchar(255) NOT NULL,
-  `jenis_kategori` varchar(255) NOT NULL
+  `nama_kategori` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `kategori`
 --
 
-INSERT INTO `kategori` (`id_kategori`, `id_user`, `nama_kategori`, `jenis_kategori`) VALUES
-(1, 2, 'Air Mineral', 'Minuman'),
-(3, 2, 'Lasegar', 'Minuman'),
-(4, 2, 'Burger', 'Makanan');
+INSERT INTO `kategori` (`id_kategori`, `id_user`, `nama_kategori`) VALUES
+(1, 2, 'Air Mineral'),
+(3, 2, 'Lasegar'),
+(4, 2, 'Burger');
 
 -- --------------------------------------------------------
 
@@ -114,7 +113,13 @@ INSERT INTO `transaksi_keluar` (`id_transaksi_keluar`, `id_barang`, `id_user`, `
 (8, 'AM01', 8, '2024-12-16', 10, 'Dibeli'),
 (9, 'B01', 8, '2024-12-16', 10, 'Dibeli'),
 (12, 'FF01', 8, '2024-12-16', 10, 'Dibeli'),
-(13, 'AM01', 8, '2024-12-18', 30, 'Salah Memasukkan data');
+(13, 'AM01', 8, '2024-12-18', 30, 'Salah Memasukkan data'),
+(14, 'B01', 2, '2024-12-20', 9, 'Dibeli'),
+(15, 'FF01', 8, '2024-12-20', 130, 'Dibeli'),
+(16, 'AM01', 8, '2024-12-20', 134, 'Dibeli'),
+(17, 'B01', 8, '2025-01-08', 1, 'dibeli'),
+(18, 'B01', 8, '2025-01-02', 1, 'Dibeli'),
+(19, 'FF01', 2, '2025-01-08', 4, 'Dibeli');
 
 --
 -- Triggers `transaksi_keluar`
@@ -176,7 +181,10 @@ INSERT INTO `transaksi_masuk` (`id_barang`, `id_transaksi_masuk`, `id_user`, `ju
 ('AM01', 17, 8, 1, '2024-12-18'),
 ('AM01', 18, 8, 1, '2024-12-18'),
 ('AM01', 19, 8, 1, '2024-12-18'),
-('AM01', 20, 8, 1, '2024-12-18');
+('AM01', 20, 8, 1, '2024-12-18'),
+('FF01', 21, 8, 8, '2024-12-20'),
+('B01', 22, 8, 10, '2024-12-20'),
+('FF01', 23, 2, 1, '2025-01-09');
 
 --
 -- Triggers `transaksi_masuk`
@@ -217,7 +225,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`id_user`, `nama`, `username`, `password`, `role`) VALUES
 (1, 'admin', 'admin', 'admin', 'admin'),
-(2, 'lucifer', 'staff', 'staff', 'staff'),
+(2, 'staff', 'staff', 'staff', 'staff'),
 (8, 'ali', 'ror', 'ror', 'staff');
 
 --
@@ -277,7 +285,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `kategori`
 --
 ALTER TABLE `kategori`
-  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `satuan`
@@ -289,13 +297,13 @@ ALTER TABLE `satuan`
 -- AUTO_INCREMENT for table `transaksi_keluar`
 --
 ALTER TABLE `transaksi_keluar`
-  MODIFY `id_transaksi_keluar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_transaksi_keluar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `transaksi_masuk`
 --
 ALTER TABLE `transaksi_masuk`
-  MODIFY `id_transaksi_masuk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_transaksi_masuk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `user`

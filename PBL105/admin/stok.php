@@ -174,7 +174,6 @@ if ($id_barang) {
             font-weight: bold; 
             text-align: center; 
             margin-bottom: 20px; 
-            padding-bottom: 10px;
         }
         
     </style>
@@ -188,7 +187,6 @@ if ($id_barang) {
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
                     
                     <a href="dashboard.php">
                 <i class="fas fa-home"></i> Beranda
@@ -287,9 +285,7 @@ if ($id_barang) {
                                     <td><?= htmlspecialchars($rawr['stok']) ?></td>
                                     <td><?= htmlspecialchars($rawr['nama']) ?></td>
                                     <td>
-                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success">
-                                            <i class="fas fa-info-circle"></i> Detail
-                                        </a>
+                                        <a href="?id=<?= $rawr['id_barang'] ?>" class="btn btn-sm btn-success">Detail</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -301,44 +297,62 @@ if ($id_barang) {
     </div>
 
    <script>
-    document.getElementById('downloadPDF')?.addEventListener('click', function() {
+    document.getElementById('downloadPDF')?.addEventListener('click', function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Header: Menambahkan logo dan judul
+    // Header: Menambahkan judul laporan
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text("Laporan Stok Barang", 10, 20);
-    
-    // Menambahkan detail barang di bawah judul
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text("Detail Barang:", 10, 30);
-    doc.text("Nama Barang: <?= htmlspecialchars($barang['nama_barang']) ?>", 10, 40);
-    doc.text("ID Barang: <?= htmlspecialchars($barang['id_barang']) ?>", 10, 50);
-    doc.text("Stok: <?= htmlspecialchars($barang['stok']) ?>", 10, 60);
-    doc.text("Kategori: <?= htmlspecialchars($barang['nama_kategori']) ?>", 10, 70);
-    doc.text("Satuan: <?= htmlspecialchars($barang['nama_satuan']) ?>", 10, 80);
-    
+
+    // Menambahkan detail barang dengan gambar di sebelah kiri
+    const imgUrl = `../gambar/<?= htmlspecialchars($barang['gambar']) ?>`; // Path gambar barang
+    const img = new Image();
+    img.src = imgUrl;
+    img.onload = function () {
+        // Menambahkan gambar di sebelah kiri
+        doc.addImage(img, 'PNG', 10, 30, 50, 50); // Posisi (x, y) dan ukuran (width, height)
+
+        // Menambahkan teks detail barang di sebelah kanan gambar
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text("Detail Barang:", 70, 30);
+        doc.text("Nama Barang: <?= htmlspecialchars($barang['nama_barang']) ?>", 70, 40);
+        doc.text("ID Barang: <?= htmlspecialchars($barang['id_barang']) ?>", 70, 50);
+        doc.text("Stok: <?= htmlspecialchars($barang['stok']) ?>", 70, 60);
+        doc.text("Kategori: <?= htmlspecialchars($barang['nama_kategori']) ?>", 70, 70);
+        doc.text("Satuan: <?= htmlspecialchars($barang['nama_satuan']) ?>", 70, 80);
+
+        lanjutkanPembuatanPDF(doc); // Lanjutkan pembuatan PDF setelah gambar selesai dimuat
+    };
+
+    img.onerror = function () {
+        console.error("Gambar tidak dapat dimuat.");
+        lanjutkanPembuatanPDF(doc); // Tetap lanjutkan meskipun gambar gagal dimuat
+    };
+    });
+
+    function lanjutkanPembuatanPDF(doc) {
     // Menambahkan garis pemisah
     doc.setLineWidth(0.5);
-    doc.line(10, 85, 200, 85); // Garis horizontal
+    doc.line(10, 85, 200, 85);
 
     // Menambahkan Tabel Riwayat Stok
     doc.autoTable({
         startY: 90,
         head: [['No', 'Tanggal', 'Jenis Transaksi', 'Jumlah', 'Catatan']],
         body: <?= json_encode($history) ?>.map((entry, index) => [
-            index + 1, // No dimulai dari 1
-            entry.tanggal, // Tanggal
-            entry.jenis_transaksi, // Jenis Transaksi
-            entry.jumlah, // Jumlah
-            entry.catatan || '-' // Catatan
+            index + 1,
+            entry.tanggal,
+            entry.jenis_transaksi,
+            entry.jumlah,
+            entry.catatan || '-'
         ]),
-        theme: 'grid', // Menggunakan grid untuk tabel
+        theme: 'grid',
         headStyles: {
-            fillColor: [100, 100, 255], // Warna latar belakang header
-            textColor: [255, 255, 255], // Warna teks header
+            fillColor: [100, 100, 255],
+            textColor: [255, 255, 255],
             fontSize: 10,
             fontStyle: 'bold',
             halign: 'center'
@@ -348,19 +362,19 @@ if ($id_barang) {
             halign: 'center'
         },
         alternateRowStyles: {
-            fillColor: [240, 240, 240] // Warna baris ganjil
+            fillColor: [240, 240, 240]
         },
         margin: { top: 10, left: 10, right: 10 }
     });
 
-    // Footer: Menambahkan catatan atau informasi tambahan di bawah PDF
+    // Footer
     doc.setFontSize(10);
     doc.setFont("helvetica", "italic");
     doc.text("Generated by: Sistem Stok Barang", 10, doc.internal.pageSize.height - 10);
-    
+
     // Menyimpan PDF
     doc.save('detail_barang_<?= htmlspecialchars($barang['id_barang']) ?>.pdf');
-});
+    }
 
    </script>
 

@@ -1,7 +1,13 @@
 <?php 
 session_start();
-session_destroy();
-session_unset();
 
-header("location:login.php");
+if (isset($_SESSION['role'])) {
+    session_destroy();
+    session_unset();
+
+    echo "<script>alert('Anda telah logout!'); window.location.href = 'login.php';</script>";
+} else {
+    header("Location: login.php");
+    exit();
+}
 ?>

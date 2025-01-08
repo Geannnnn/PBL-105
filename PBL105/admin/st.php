@@ -9,33 +9,49 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
 <!DOCTYPE html>
 
 
-<?php if(isset($_POST['adduser'])) {
+<?php
+if (isset($_POST['adduser'])) {
     $a = $_POST['nama'];
     $b = $_POST['username'];
     $c = $_POST['password'];
 
-    $q = $conn->prepare("INSERT INTO user values(null,'$a','$b','$c','staff')");
-    $q = $q->execute();
+    try {
+        $q = $conn->prepare("INSERT INTO user VALUES (null, '$a', '$b', '$c', 'staff')");
+        $q->execute();
+        echo "<script>alert('User berhasil ditambahkan!'); window.location.href = 'st.php';</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('Gagal menambahkan user.'); window.location.href = 'st.php';</script>";
+    }
+}
 
-    header("location:st.php");
-} ?>
-<?php if(isset($_POST['hapususer'])) {
+if (isset($_POST['hapususer'])) {
     $id = $_POST['id_user'];
 
-    $q = $conn->prepare("DELETE FROM user WHERE id_user = '$id'");
-    $q = $q->execute();
-    header("location:st.php");
-} ?>
-<?php if(isset($_POST['edituser'])) {
+    try {
+        $q = $conn->prepare("DELETE FROM user WHERE id_user = '$id'");
+        $q->execute();
+        echo "<script>alert('User berhasil dihapus!'); window.location.href = 'st.php';</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('Gagal menghapus user.'); window.location.href = 'st.php';</script>";
+    }
+}
+
+if (isset($_POST['edituser'])) {
     $id = $_POST['id_user'];
     $a = $_POST['nama'];
     $b = $_POST['username'];
     $c = $_POST['password'];
 
-    $q = $conn->prepare("UPDATE user SET nama = '$a', username = '$b', password = '$c' WHERE id_user = '$id'");
-    $q = $q->execute();
-    header("location:st.php");
-} ?>
+    try {
+        $q = $conn->prepare("UPDATE user SET nama = '$a', username = '$b', password = '$c' WHERE id_user = '$id'");
+        $q->execute();
+        echo "<script>alert('User berhasil diperbarui!'); window.location.href = 'st.php';</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('Gagal memperbarui user.'); window.location.href = 'st.php';</script>";
+    }
+}
+?>
+
 
 
 <?php ?>
@@ -107,7 +123,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
             font-weight: bold; 
             text-align: center; 
             margin-bottom: 20px;
-            padding-bottom: 10px;
         }
         .table thead {
             background-color: rgb(218, 199, 228); 
@@ -131,7 +146,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
 
                     <a href="dashboard.php">
                 <i class="fas fa-home"></i> Beranda
@@ -149,9 +163,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
             </div>
 
             <div class="col-lg-10 col-xl-10 col-md-8 col-sm-6 content">
-            <h2 class="mt-5" style="margin-left:10px;"><button type="button" data-bs-toggle="modal" data-bs-target="#addUser" style="border: none; background:none;" >
-                <i class="fas fa-user-plus"></i></button>Akun Staff
-            </h2>
+            <h2 class="mt-5" style="margin-left:10px;"><button type="button" data-bs-toggle="modal" data-bs-target="#addUser" style="border: none; background:none;" ><i class="fa-solid fa-circle-plus"></i></button>Akun Staff</h2>
             <div class="modal fade" id="addUser">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -174,12 +186,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                                     <input type="password" class="form-control" id="password" name="password" required>
                                 </div>
                                 <div class="modal-add-account mb-3">
-                                    <button type="submit" name="adduser" class="btn btn-tambah">
-                                    <i class="fa fa-plus-circle"></i> Tambah
-                                    </button>
-                                    <button type="reset" class="btn btn-reset">
-                                    <i class="fa fa-times-circle" ></i> Batal
-                                    </button>
+                                    <button type="submit" name="adduser" class="btn btn-tambah">Tambah</button>
+                                    <button type="reset" class="btn btn-reset">Batal</button>
                                 </div>
                             </form>
                         </div>
@@ -236,12 +244,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                                     <p>Apakah anda yakin ingin menghapus akun ini?</p>
                                     <form action="" method="post">
                                         <input type="hidden" name="id_user" value="<?= $rawr['id_user'];?>">
-                                        <button type="submit" name="hapususer" class="btn btn-danger">
-                                        <i class="fa-solid fa-trash-can"></i> Hapus
-                                        </button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        <i class="fa fa-times-circle" ></i> Batal
-                                        </button>
+                                        <button type="submit" name="hapususer" class="btn btn-danger">Hapus</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                                     </form>
                                 </div>
                             </div>
@@ -253,6 +257,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h4 class="modal-title">Edit Akun</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" style="border:none;"></button>
                             </div>
                             <div class="modal-body">
                                 <form action="" method="post">
@@ -270,12 +275,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                                         <input type="text" class="form-control" id="password" name="password" value="<?= $rawr['password'] ?>" required>
                                     </div>
                                     <div class="modal-edit-account mb-3">
-                                    <button type="submit" name="edituser" class="btn btn-tambah">
-                                    <i class="fa fa-check-circle" ></i> Ubah
-                                    </button>
-                                    <button type="reset" class="btn btn-reset" data-bs-dismiss="modal">
-                                    <i class="fa fa-times-circle" ></i> Batal
-                                    </button>
+                                    <button type="submit" name="edituser" class="btn btn-tambah">Ubah</button>
+                                    <button type="reset" class="btn btn-reset">Batal</button>
                                 </div>
                                 </form>
                             </div>

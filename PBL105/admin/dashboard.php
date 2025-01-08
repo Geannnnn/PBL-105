@@ -187,7 +187,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
             font-weight: bold; 
             text-align: center; 
             margin-bottom: 20px; 
-            padding-bottom: 10px;
         }
         
     </style>
@@ -211,7 +210,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                        <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
 
                     <a style="background-color: rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
                         <i class="fas fa-home"></i> Beranda
@@ -237,6 +235,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                             <i id="bellIcon" class="fas fa-bell">
                                 <span id="alertCount"><?= count($lowStockItems) ?></span>
                             </i>
+                            <i class="fas fa-user-circle"></i>
                         </div>
                         <div id="alertDropdown">
                             <div id="alertBox"></div>

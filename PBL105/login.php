@@ -222,10 +222,6 @@
             <h3 class="stok-title" style="color: #4a00e0;">
                 <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
             </h3>
-            <div style="height: 1px; background: #ddd; margin: 10px 0; width: 80%;"></div>
-            <p style="font-size: 16px; color: #555; text-align: center;">
-                Solusi Manajemen Stok
-            </p>
         </div>
 
         <div style="height: 5px; background: linear-gradient(to right, #4a00e0, #8ec5fc); border-radius: 10px; margin: 20px 0;"></div>
@@ -246,9 +242,6 @@
                 </div>
             </div>
             <button class="btn btn-login" name="ror">Masuk</button>
-            <p style="margin-top: 15px; text-align: center; font-size: 14px; color: #555;">
-                Hak Cipta &copy; 2024 Tim PBL 105 TRPL 1C Pagi
-            </p>
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
