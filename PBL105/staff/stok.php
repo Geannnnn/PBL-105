@@ -546,12 +546,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                             echo "<script>alert('Gagal menghapus barang.'); window.location.href = 'stok.php';</script>";
                         }
                     }elseif (isset($_POST['editBarang'])) {
-                        $fo;
-                        if ($_FILES['gambar']['name'] == '') {
-                            $fo = $_POST['odd'];
-                        } else {
-                            $fo = $_FILES['gambar']['name'];
-                        }
+                        $fo = ($_FILES['gambar']['name'] == '') ? $_POST['odd'] : $_FILES['gambar']['name'];
                     
                         $awd = $_POST['id_barang'];
                         $nb = $_POST['nama_barang'];
@@ -562,15 +557,30 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                         $isd = $_SESSION['id'];
                     
                         try {
-                            $s = $conn->prepare("UPDATE barang SET id_kategori = '$k', nama_barang = '$nb', stok = '$stok', gambar = '$fo', id_user = '$isd' WHERE id_barang = '$awd'");
-                            $s->execute();
-                            
-                            move_uploaded_file($gas, '../gambar/' . $fo);
+                            $query = "UPDATE barang 
+                                      SET id_kategori = ?, id_satuan = ?, nama_barang = ?, stok = ?, gambar = ?, id_user = ?
+                                      WHERE id_barang = ?";
+                            $s = $conn->prepare($query);
+                            $s->execute([$k, $sat, $nb, $stok, $fo, $isd, $awd]);
+                    
+                            if ($_FILES['gambar']['name'] != '') {
+                                move_uploaded_file($gas, '../gambar/' . $fo);
+                            }
                     
                             echo "<script>alert('Data barang berhasil diperbarui!'); window.location.href = 'stok.php';</script>";
                         } catch (Exception $e) {
                             echo "<script>alert('Gagal memperbarui data barang.'); window.location.href = 'stok.php';</script>";
                         }
+                    }
+                    
+                    if (isset($_GET['id_barang'])) {
+                        $barang = $conn->prepare("SELECT barang.*, satuan.id_satuan, kategori.id_kategori 
+                                                  FROM barang 
+                                                  LEFT JOIN satuan ON barang.id_satuan = satuan.id_satuan 
+                                                  LEFT JOIN kategori ON barang.id_kategori = kategori.id_kategori 
+                                                  WHERE id_barang = ?");
+                        $barang->execute([$_GET['id_barang']]);
+                        $rawr = $barang->fetch(PDO::FETCH_ASSOC);
                     }
                     ?>
 
@@ -670,15 +680,14 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                                     </div>
                                     <div class="form-floating mb-3">
                                         <select class="form-select" name="barang_kategori" id="kat">
-                                                <?php 
-                                                $s = $conn->prepare("SELECT * FROM kategori"); 
-                                                $s->execute();
-                                                foreach ($s as $rawdr) { 
-                                                    $selected = ($rawwr['id_satuan'] == $rawr['id_satuan']) ? 'selected' : '';
-                                                ?>
-
-                                            <option value="<?= $rawdr['id_kategori']; ?>"><?= $selected ?><?= $rawdr['nama_kategori']; ?></option>
-                                         <?php } ?>
+                                            <?php 
+                                            $s = $conn->prepare("SELECT * FROM kategori"); 
+                                            $s->execute();
+                                            foreach ($s as $rawdr) { 
+                                                $selected = ($rawdr['id_kategori'] == $rawr['id_kategori']) ? 'selected' : '';
+                                            ?>
+                                            <option value="<?= $rawdr['id_kategori']; ?>" <?= $selected; ?>><?= $rawdr['nama_kategori']; ?></option>
+                                            <?php } ?>
                                         </select>
                                         <label for="kat">Kategori</label>
                                     </div>
