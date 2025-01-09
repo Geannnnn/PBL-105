@@ -91,6 +91,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
+                <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
 
                     <a href="dashboard.php">
                         <i class="fas fa-home"></i> Beranda
