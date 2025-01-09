@@ -238,6 +238,9 @@
                 <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
             </h3>
         </div>
+        <p style="font-size: 16px; color: #555; text-align: center;">
+                Solusi Manajemen Stok
+            </p>
 
         <div style="height: 5px; background: linear-gradient(to right, #4a00e0, #8ec5fc); border-radius: 10px; margin: 20px 0;"></div>
         <h2 class="titles" style="margin-top: 20px; text-align: center;">Halo, Silahkan Login</h2>
