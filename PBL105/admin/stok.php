@@ -19,7 +19,7 @@ if ($id_barang) {
     $barangCount = $stmt->fetchColumn();
 
     if ($barangCount == 0) {
-        echo "<script>alert('ID Barang tidak ditemukan!'); window.location.href = 'st.php';</script>";
+        echo "<script>alert('ID Barang tidak ditemukan!'); window.location.href = 'akunstaff.php';</script>";
         exit();
     }
 
@@ -183,7 +183,7 @@ if ($id_barang) {
         <div class="row">
             
             <div class="col-lg-2 col-xl-2 col-md-4 col-sm-3 sidebar">
-            <img src="../gambar/1.png" alt="Logo" width="140" height="80">
+            <img src="../gambar/ourlogo.png" alt="Logo" width="140" height="80">
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
@@ -194,7 +194,7 @@ if ($id_barang) {
             <a style="background-color:rgb(252, 246, 255); color: #333; border-radius: 20px;" href="stok.php">
                 <i class="fas fa-box"></i> Stok
             </a>
-            <a href="st.php">
+            <a href="akunstaff.php">
                 <i class="fas fa-users"></i> Staff Gudang
             </a>
             <a href="../logout.php" style="width:80%" class="logout">

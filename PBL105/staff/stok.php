@@ -13,6 +13,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -73,11 +76,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-2 col-xl-2 col-md-4 col-sm-6 sidebar">
-            <img src="../gambar/1.png" alt="Logo" width="140" height="80">
+            <img src="../gambar/ourlogo.png" alt="Logo" width="140" height="80">
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
                     
                     <a href="dashboard.php">
                         <i class="fas fa-home"></i> Beranda

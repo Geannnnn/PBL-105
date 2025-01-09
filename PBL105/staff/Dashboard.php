@@ -217,11 +217,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
             <div class="row">
                 <div class="col-2">
                     <div class="col-lg-2 col-xl-2 col-md-4 col-sm-6 sidebar">
-                    <img src="../gambar/1.png" alt="Logo" width="140" height="80">
+                    <img src="../gambar/ourlogo.png" alt="Logo" width="140" height="80">
                     <h3 class="stok-title" style="color: #4a00e0;">
                         <span>STOK</span><span style="color: rgb(223, 37, 198);">STOK</span>
                     </h3>
-                        <hr style="border: 1px solid rgb(159, 126, 177);; margin: 10px 0;">
 
                     <a style="background-color: rgb(252, 246, 255); color: #333; border-radius: 20px;" href="#">
                         <i class="fas fa-home"></i> Beranda
