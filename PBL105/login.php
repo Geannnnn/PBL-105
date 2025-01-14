@@ -261,7 +261,7 @@
             </div>
             <button class="btn btn-login" name="login">Masuk</button>
             <p style="margin-top: 15px; text-align: center; font-size: 14px; color: #555;">
-                Hak Cipta &copy; 2025 Tim PBL 105 TRPL 1C Pagi
+                Hak Cipta &copy; 2025 Tim PBL 114 TRPL 1C Pagi
             </p>
         </form>
     </div>
