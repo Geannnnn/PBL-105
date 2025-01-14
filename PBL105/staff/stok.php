@@ -91,7 +91,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'staff' || empty($_SESSION
                     <a href="MK.php">
                     <i class="fas fa-exchange-alt"></i> Barang Masuk/Keluar
                 </a>
-                    <a href="../logout.php" style="width:80%" class="logout">
+                    <a href="../logout.php" class="logout" style="width: 80%;" onclick="return confirm('Apakah Anda yakin ingin logout?');">
                         <i class="fas fa-sign-out-alt"></i> Keluar
                     </a>
             </div>
