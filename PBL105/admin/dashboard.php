@@ -221,9 +221,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin' || empty($_SESSION
                     <a href="akunstaff.php">
                         <i class="fas fa-users"></i> Staff Gudang
                     </a>
-                    <a href="../logout.php" class="logout" style="width: 80%;">
+                    <a href="../logout.php" class="logout" style="width: 80%;" onclick="return confirm('Apakah Anda yakin ingin logout?');">
                         <i class="fas fa-sign-out-alt"></i> Keluar
                     </a>
+
 
                     </div>
                 </div>
