@@ -163,9 +163,10 @@ if (isset($_POST['edituser'])) {
             <a style="background-color: rgb(252, 246, 255); color: #333; border-radius: 20px;" href="akunstaff.php">
                 <i class="fas fa-users"></i> Staff Gudang
             </a>
-            <a href="../logout.php" class="logout" style="width: 80%;">
+            <a href="../logout.php" class="logout" style="width: 80%;" onclick="return confirm('Apakah Anda yakin ingin logout?');">
                 <i class="fas fa-sign-out-alt"></i> Keluar
             </a>
+
 
             </div>
 
